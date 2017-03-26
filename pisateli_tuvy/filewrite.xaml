@@ -1,0 +1,19 @@
+﻿<Window x:Class="pisateli_tuvy.filewrite"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:pisateli_tuvy"
+        mc:Ignorable="d"
+      Title="filewrite" Height="300" Width="550">
+    <StackPanel Orientation="Vertical" Margin="0 10 0 0">
+        <StackPanel Orientation="Horizontal" Margin="0 0 0 10">
+            <TextBlock Margin="0 0 50 0">Введите фамилию автора</TextBlock>
+            <TextBox Width="250" Name="autor" Margin="0 0 10 0"></TextBox>
+            <Button Content="Найти" Name="Find" Click="Find_Click"></Button>
+        </StackPanel>
+        <StackPanel Name="a1" Orientation="Vertical">
+
+        </StackPanel>
+    </StackPanel>
+</Window>
