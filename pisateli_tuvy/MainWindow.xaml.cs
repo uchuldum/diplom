@@ -15,6 +15,7 @@ using System.IO;
 using System.Data.OleDb;
 using System.Data;
 
+
 namespace pisateli_tuvy
 {
     /// <summary>
@@ -40,26 +41,195 @@ namespace pisateli_tuvy
             bitmapImage.EndInit();
             return bitmapImage;
         }
+
+
         ///Визулизация МЕНЮ
         public void menu()
         {
-            int count = Convert.ToInt32(con.ExecuteScalar("select count (*) from menu where menuparent_id=0"));
-            string[] menu_item = con.Reader_Array("select menu_name from menu where menuparent_id=0 ", count);
+            string[] menu_item_parent = con.Reader_Array("select menu_id from menu  where menuparent_id<>0", 7);
+            string[] menu_item = con.Reader_Array("select menu_name from menu ", 15);
+            string[] menu_id = con.Reader_Array("select menu_id from menu", 15);
+
             Menu.Children.Clear();
 
             //string[] menu_item = new string[count];
-            for (int i=0;i<count;++i)
+            for (int i=0;i<15;++i)
             {
                 StackPanel stp = new StackPanel();
+                
+                stp.Background = Brushes.LightBlue;
+                stp.Margin = new Thickness(0,0,0,10);
                 stp.Width = Menu.Width;
+                stp.Tag = menu_id[i].Trim();
+                
+                foreach(var a in menu_item_parent)
+                {
+                    if(stp.Tag.ToString() == a)
+                    {
+                        stp.Margin = new Thickness(20, 0, 0, 10);
+                    }
+                }
                 stp.Height = 15;
                 TextBlock txb = new TextBlock();
                 txb.Width = stp.Width;
                 txb.Text = menu_item[i];
                 Menu.Children.Add(stp);
                 stp.Children.Add(txb);
+                stp.PreviewMouseUp += new MouseButtonEventHandler(stp_MouseUp);
+                stp.MouseEnter += new MouseEventHandler(stP_MouseEnter);
+                stp.MouseLeave += new MouseEventHandler(stP_MouseLeave);
             }
         }
+        private void stp_MouseUp(object sender, System.EventArgs e)
+        {
+            StackPanel stp = (StackPanel)sender;
+            int number = Convert.ToInt32(stp.Tag);
+            
+            // MessageBox.Show(number + "");
+            switch (number)
+            {
+                case 1: biographia(glob_autor);
+                    break;
+                case 2: pisatelskaya_rabota(glob_autor);
+                    break;
+                case 3:knigi(glob_autor);
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    break;
+                case 6:
+                    break;
+                case 7:
+                    break;
+                case 8:
+                    break;
+                case 9:
+                    break;
+                case 10:
+                    break;
+                case 11:
+                    break;
+                case 12:
+                    break;
+                case 13:
+                    break;
+                case 14:
+                    break;
+                case 15:
+                    break;
+            }
+        }
+
+                                          ////////// ФУНКЦИИ ДЛЯ МЕНЮ
+        /////БИОГРАФИЯ Писателя
+        public void biographia(string id)
+        {
+            try
+            {
+                webbrowser.Visibility = Visibility.Visible;
+                string biographia = con.Reader("select chog_biografiya from chogaalchy where chog_id =" + id);
+                webbrowser.Navigate(path + biographia);///Вывод биографии писателя
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("" + ex);
+            }
+        }
+        //////
+
+        /////Писательская работа
+        public void pisatelskaya_rabota(string id)
+        {
+            try
+            {
+                webbrowser.Visibility = Visibility.Visible;
+                string pis_rab = con.Reader("select azhyldary_text from azhyldary where azhyldary_uid =" + id);
+                webbrowser.Navigate(path+"pisateli\\"+pis_rab+"\\pisatel_rab.pdf");///Вывод биографии писателя
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
+        }
+        //////
+
+        /////Выпущенные книги
+        public void knigi(string id)
+        {
+            try
+            {
+                TVMenu.Visibility = Visibility.Visible;
+                webbrowser.Visibility = Visibility.Collapsed;
+                int count = Convert.ToInt32(con.ExecuteScalar("select count (*) from nomnary where nomnary_uid = " + glob_autor));
+                string[] kniga_name = con.Reader_Array("select nomnary_title from nomnary where nomnary_uid = " + glob_autor+ " order by nomnary_title", count);
+                string[] kniga_id = con.Reader_Array("select nomnary_id from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
+                string[] kniga_janr = con.Reader_Array("select nomnary_zhanr from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
+                string[] kniga_date = con.Reader_Array("select nomnary_god from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
+                string[] kniga_tipograph = con.Reader_Array("select nomnary_tipograph from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
+                string[] kniga_str = con.Reader_Array("select nomnary_stranisy from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
+                string[] kniga_text = con.Reader_Array("select nomnary_text from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
+                for (int i=0;i<count;i++)
+                {
+                    TreeViewItem TVitem = new TreeViewItem();
+                    TVMenu.Items.Add(TVitem);
+                }
+                int k = 0;
+                foreach(TreeViewItem item in TVMenu.Items)
+                {
+                    item.Header = kniga_name[k]+". "+kniga_name[k]+" "+kniga_janr[k]+" .- "+kniga_tipograph[k]+", "+kniga_date[k];
+                    item.Tag = kniga_id[k];
+
+
+
+                    item.MouseEnter += new MouseEventHandler(item_MouseEnter);
+                    item.MouseLeave += new MouseEventHandler(item_MouseLeave);
+                    item.PreviewMouseUp += new MouseButtonEventHandler(item_MouseUp);
+                    k++;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
+        }
+        private void item_MouseUp(object sender, EventArgs e)
+        {
+            TreeViewItem Item = (TreeViewItem)sender;
+            MessageBox.Show(Item.Tag+"");
+        }
+
+        //////
+
+        /////Работы о писателе
+        //////
+
+        /////Переводы работ писателя на другие языки
+        //////
+
+        /////Переводы с других языков на тувинский язык
+        //////
+
+        /////Публицистика
+        //////
+
+        /////Стихотворения ставшие песнями
+        //////
+
+        /////Иллюстрации к произведениям
+        //////
+
+        /////Фотографии
+        //////
+
+        /////Аудиоматериалы
+        //////
+
+        /////Видеоматериалы
+        //////
+
+        /////Презентация
+        //////
         public void vis()
         {
             stack_distr.Visibility = Visibility.Hidden;
@@ -120,6 +290,12 @@ namespace pisateli_tuvy
                 item.FontStyle = FontStyles.Normal;
                 item.Foreground = Brushes.Black;
             }
+            foreach (TreeViewItem item in TVMenu.Items)
+            {
+                Mouse.OverrideCursor = Cursors.Arrow;
+                item.FontStyle = FontStyles.Normal;
+                item.Foreground = Brushes.Black;
+            }
         }
 
 
@@ -133,7 +309,7 @@ namespace pisateli_tuvy
             stack_distr.Visibility = Visibility.Visible;
             writers.Children.Clear();
             try
-            { ///////КАРТА+ТЕКСТ
+            { 
                 string region_photo =  "\\all\\dist_img\\" + con.Reader("select region_id from region where region_id = " + tvItem.Tag)+".png";
                 string region_text = con.Reader("select r_info from region where region_id = " + tvItem.Tag);
               
@@ -207,44 +383,28 @@ namespace pisateli_tuvy
                 MessageBox.Show(ex + "");
             }
         }
+        //////Изменение курсора на STACKPANEL
         private void stP_MouseEnter(object sender, System.EventArgs e)
         {
-            StackPanel tvItem = (StackPanel)sender;
+            StackPanel stp = (StackPanel)sender;
             Mouse.OverrideCursor = Cursors.Hand;
         }
         private void stP_MouseLeave(object sender, System.EventArgs e)
         {
-            StackPanel tvItem = (StackPanel)sender;
+            StackPanel stp = (StackPanel)sender;
             Mouse.OverrideCursor = Cursors.Arrow;
         }
 
 
 
         /////////////////////////////////////////////НАЖАТИЕ НА ПИСАТЕЛЯ В КОЖУУНАХ
-        
-
-        
         private void stP_MouseUp(object sender, System.EventArgs e)
         {
             StackPanel stP = (StackPanel)sender;
-            for (int i = 0; i < 5; i++) a[i].Visibility = Visibility.Hidden;
             vis();
-
-            // treeView1.Visibility = Visibility.Visible;
+            glob_autor = stP.Tag.ToString().Trim();
             menu();
-
-
-
-            webbrowser.Visibility = Visibility.Visible;
-            try
-            {
-                string biographia = con.Reader("select chog_biografiya from chogaalchy where chog_id =" + stP.Tag.ToString()); 
-                webbrowser.Navigate(path + biographia);///Вывод биографии писателя
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("" + ex);
-            }
+            biographia(glob_autor);
 
         }
         public static string path = System.AppDomain.CurrentDomain.BaseDirectory;
@@ -303,11 +463,6 @@ namespace pisateli_tuvy
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             main();
-            a[0] = dataGrid1;
-            a[1] = dataGrid2;
-            a[2] = dataGrid3;
-            a[3] = dataGrid4;
-            a[4] = dataGrid5;
             main_img.Source = GetImage("logo_main.png");
         }
        
@@ -455,161 +610,7 @@ namespace pisateli_tuvy
             this.main_tuv.Visibility = Visibility.Visible;
         }
 
-        private void dataGrid1_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        {
-            for (int i = 0; i < 5; i++) a[i].Visibility = Visibility.Hidden;
-            vis();
-            string str = "select b_path from books where b_id = " + (dataGrid1.SelectedIndex+1);
-            string kniga = "";
-            try
-            {
-                using (OleDbConnection con = new OleDbConnection(connectionstring))
-                {
-                    OleDbCommand com = new OleDbCommand(str, con);
-                    con.Open();
-                    OleDbDataReader reader = com.ExecuteReader();
-                    while (reader.Read())
-                    {
-                        kniga = reader.GetValue(0).ToString();
-                    }
-                    reader.Close();
-                    con.Close();
-                }
-
-             /*   TextRange range;
-                FileStream fStream;
-                if (File.Exists(path + kniga))
-                {
-                    range = new TextRange(this.richTextBox3.Document.ContentStart, this.richTextBox3.Document.ContentEnd);
-                    fStream = new FileStream(path + kniga, FileMode.OpenOrCreate);
-                    range.Load(fStream, DataFormats.Rtf);
-                    fStream.Close();
-                }*/
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex + "");
-            }
-        }
-
-        private void dataGrid2_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        {
-            for (int i = 0; i < 5; i++) a[i].Visibility = Visibility.Hidden;
-            vis();
-            string str = "select ab_path from about_writer where ab_id = " + (dataGrid2.SelectedIndex + 1);
-            string kniga = "";
-            using (OleDbConnection con = new OleDbConnection(connectionstring))
-            {
-                OleDbCommand com = new OleDbCommand(str, con);
-                con.Open();
-                OleDbDataReader reader = com.ExecuteReader();
-                while (reader.Read())
-                {
-                    kniga = reader.GetValue(0).ToString();
-                }
-                reader.Close();
-                con.Close();
-            }
-
-        /*    TextRange range;
-            FileStream fStream;
-            if (File.Exists(path + kniga))
-            {
-                range = new TextRange(this.richTextBox3.Document.ContentStart, this.richTextBox3.Document.ContentEnd);
-                fStream = new FileStream(path + kniga, FileMode.OpenOrCreate);
-                range.Load(fStream, DataFormats.Rtf);
-                fStream.Close();
-            }*/
-        }
-        private void dataGrid3_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        {
-            for (int i = 0; i < 5; i++) a[i].Visibility = Visibility.Hidden;
-            vis();
-            string str = "select pt_path from per_tuv where pt_id = " + (dataGrid3.SelectedIndex + 1);
-            string kniga = "";
-            using (OleDbConnection con = new OleDbConnection(connectionstring))
-            {
-                OleDbCommand com = new OleDbCommand(str, con);
-                con.Open();
-                OleDbDataReader reader = com.ExecuteReader();
-                while (reader.Read())
-                {
-                    kniga = reader.GetValue(0).ToString();
-                }
-                reader.Close();
-                con.Close();
-            }
-
-          /*  TextRange range;
-            FileStream fStream;
-            if (File.Exists(path + kniga))
-            {
-                range = new TextRange(this.richTextBox3.Document.ContentStart, this.richTextBox3.Document.ContentEnd);
-                fStream = new FileStream(path + kniga, FileMode.OpenOrCreate);
-                range.Load(fStream, DataFormats.Rtf);
-                fStream.Close();
-            }*/
-        }
-        private void dataGrid5_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        {
-            for (int i = 0; i < 5; i++) a[i].Visibility = Visibility.Hidden;
-            vis();
-            string str = "select sp_path from stih_pes where sp_id = " + (dataGrid5.SelectedIndex + 1);
-            string kniga = "";
-            using (OleDbConnection con = new OleDbConnection(connectionstring))
-            {
-                OleDbCommand com = new OleDbCommand(str, con);
-                con.Open();
-                OleDbDataReader reader = com.ExecuteReader();
-                while (reader.Read())
-                {
-                    kniga = reader.GetValue(0).ToString();
-                }
-                reader.Close();
-                con.Close();
-            }
-
-          /*  TextRange range;
-            FileStream fStream;
-            if (File.Exists(path + kniga))
-            {
-                range = new TextRange(this.richTextBox3.Document.ContentStart, this.richTextBox3.Document.ContentEnd);
-                fStream = new FileStream(path + kniga, FileMode.OpenOrCreate);
-                range.Load(fStream, DataFormats.Rtf);
-                fStream.Close();
-            }*/
-        }
-
-        private void dataGrid4_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
-        {
-
-            for (int i = 0; i < 5; i++) a[i].Visibility = Visibility.Hidden;
-            vis();
-            string str = "select po_path from per_other where po_id = " + (dataGrid4.SelectedIndex + 1);
-            string kniga = "";
-            using (OleDbConnection con = new OleDbConnection(connectionstring))
-            {
-                OleDbCommand com = new OleDbCommand(str, con);
-                con.Open();
-                OleDbDataReader reader = com.ExecuteReader();
-                while (reader.Read())
-                {
-                    kniga = reader.GetValue(0).ToString();
-                }
-                reader.Close();
-                con.Close();
-            }
-
-          /*  TextRange range;
-            FileStream fStream;
-            if (File.Exists(path + kniga))
-            {
-                range = new TextRange(this.richTextBox3.Document.ContentStart, this.richTextBox3.Document.ContentEnd);
-                fStream = new FileStream(path + kniga, FileMode.OpenOrCreate);
-                range.Load(fStream, DataFormats.Rtf);
-                fStream.Close();
-            }*/
-        }
+       
         private void Image_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             main();
@@ -627,11 +628,7 @@ namespace pisateli_tuvy
 
         private void search_Click(object sender, RoutedEventArgs e)
         {
-             /*try
-             {
-                 if(comboBox1.SelectedIndex>-1 && textBox1.Text.Trim()!="")
-
-             }*/
+            
         }
 
         private void image2_MouseEnter(object sender, MouseEventArgs e)
@@ -816,251 +813,6 @@ namespace pisateli_tuvy
                 fStream.Close();
             }*/
         }
-
-        private void t4_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            vis_datagrid(dataGrid2);
-            string str = "select ab_id as Номер, ab_name as Название_работы,ab_wr as Кто_написал, ab_book as Издательство, ab_date as Дата_выпуска from about_writer where ab_ws= " + glob_autor;
-            OleDbConnection con = new OleDbConnection(connectionstring);
-            con.Open();
-            OleDbCommand com = new OleDbCommand(str, con);
-            OleDbDataAdapter adapter = new OleDbDataAdapter(str, con);
-            OleDbCommandBuilder cb = new OleDbCommandBuilder(adapter);
-            DataSet ds = new DataSet();
-            adapter.Fill(ds, "about_writer");
-            dataGrid2.ItemsSource = ds.Tables["about_writer"].DefaultView;
-            con.Close();
-        }
-
-        private void t52_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            vis_datagrid(dataGrid3);
-            string str = "select pt_id as Номер, pt_pis as Писатель, pt_name as Название_произведения, pt_tema as Жанр, pt_city as Город_издания, pt_god as Год_издания, pt_izdatelstvo as Издательство, pt_str as Количество_страниц from per_tuv where pt_ws=" + glob_autor;
-            OleDbConnection con = new OleDbConnection(connectionstring);
-            con.Open();
-            OleDbCommand com = new OleDbCommand(str, con);
-            OleDbDataAdapter adapter = new OleDbDataAdapter(str, con);
-            OleDbCommandBuilder cb = new OleDbCommandBuilder(adapter);
-            DataSet ds = new DataSet();
-            adapter.Fill(ds, "per_tuv");
-            dataGrid3.ItemsSource = ds.Tables["per_tuv"].DefaultView;
-            con.Close();
-        }
-
-        private void t51_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            vis_datagrid(dataGrid4);
-            string str = "select po_id as Номер, po_name as Название_произведения, po_tema as Жанр, po_pis as Перевод, po_god as Год_издания, po_izdat as Издательство, po_str as Количество_страниц from per_other where po_ws =" + glob_autor;
-            OleDbConnection con = new OleDbConnection(connectionstring);
-            con.Open();
-            OleDbCommand com = new OleDbCommand(str, con);
-            OleDbDataAdapter adapter = new OleDbDataAdapter(str, con);
-            OleDbCommandBuilder cb = new OleDbCommandBuilder(adapter);
-            DataSet ds = new DataSet();
-            adapter.Fill(ds, "per_other");
-            dataGrid4.ItemsSource = ds.Tables["per_other"].DefaultView;
-            con.Close();
-        }
-
-        private void t7_PreviewMouseDoubleClick_1(object sender, MouseButtonEventArgs e)
-        {
-            vis_datagrid(dataGrid5);
-            string str = "select sp_id as Номер, sp_name as Название_произведения, sp_singer as Мелодия from stih_pes where sp_ws = " + glob_autor;
-            OleDbConnection con = new OleDbConnection(connectionstring);
-            con.Open();
-            OleDbCommand com = new OleDbCommand(str, con);
-            OleDbDataAdapter adapter = new OleDbDataAdapter(str, con);
-            OleDbCommandBuilder cb = new OleDbCommandBuilder(adapter);
-            DataSet ds = new DataSet();
-            adapter.Fill(ds, "stih_pes");
-            dataGrid5.ItemsSource = ds.Tables["stih_pes"].DefaultView;
-            con.Close();
-        }
-
-        private void t3_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            vis_datagrid(dataGrid1);
-            string str = "select b_id as Номер, b_name as Название_книги,b_city as Город_издания, b_izdat as Издательство, b_year as Год_выпуска,b_str_count as Количество_страниц from books where b_wr=" + glob_autor;
-            OleDbConnection con = new OleDbConnection(connectionstring);
-            con.Open();
-            OleDbCommand com = new OleDbCommand(str, con);
-            OleDbDataAdapter adapter = new OleDbDataAdapter(str, con);
-            OleDbCommandBuilder cb = new OleDbCommandBuilder(adapter);
-            DataSet ds = new DataSet();
-            adapter.Fill(ds, "books");
-            dataGrid1.ItemsSource = ds.Tables["books"].DefaultView;
-            con.Close();
-
-        }
-
-        private void t2_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-            //t2.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t2_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-           // t2.FontStyle = FontStyles.Normal;
-        }
-
-        private void t3_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-          //  t3.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t3_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-          //  t3.FontStyle = FontStyles.Normal;
-        }
-
-        private void t4_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-           // t4.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t4_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-         //   t4.FontStyle = FontStyles.Normal;
-        }
-
-        private void t5_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-           // t5.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t5_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-           // t5.FontStyle = FontStyles.Normal;
-        }
-
-        private void t51_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-          //  t51.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t51_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-           // t51.FontStyle = FontStyles.Normal;
-        }
-
-        private void t52_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-          //  t52.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t52_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-          //  t52.FontStyle = FontStyles.Normal;
-        }
-
-        private void t6_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-            //t6.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t6_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-          //  t6.FontStyle = FontStyles.Normal;
-        }
-
-        private void t7_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-          //  t7.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t7_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-          //  t7.FontStyle = FontStyles.Normal;
-        }
-
-        private void t8_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-           // t8.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t8_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-          //  t8.FontStyle = FontStyles.Normal;
-        }
-
-        private void t81_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-          //  t81.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t81_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-           // t81.FontStyle = FontStyles.Normal;
-        }
-
-        private void t82_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-          //  t82.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t82_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-          //  t82.FontStyle = FontStyles.Normal;
-        }
-
-        private void t83_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-         //   t83.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t83_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-          //  t83.FontStyle = FontStyles.Normal;
-        }
-
-        private void t84_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-           // t84.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t84_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-           // t84.FontStyle = FontStyles.Normal;
-        }
-
-        private void t85_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-           // t85.FontStyle = FontStyles.Oblique;
-        }
-
-        private void t85_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-           // t85.FontStyle = FontStyles.Normal;
-        }
-
         private void button5_Click(object sender, RoutedEventArgs e)
         {
             pass p = new pass();
