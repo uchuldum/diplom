@@ -8,34 +8,39 @@
         Title="MainWindow"   FontFamily="Gulim" Loaded="Window_Loaded" x:Name="main_window" d:DesignWidth="2108.187" d:DesignHeight="1376.121" >
     <ScrollViewer>
         <StackPanel Orientation="Vertical" Height="1330">
-            <StackPanel Height="160" x:Name="Header" VerticalAlignment="Top" Background="#FF0096D3">
-                <Image VerticalAlignment="Center" HorizontalAlignment="Left" Height="107" Width="440" PreviewMouseUp="Image_PreviewMouseUp" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" x:Name="main_img"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-                    <Button BorderThickness="0" Content="Чогаалчылар" Background="#FF0096D3" BorderBrush="#FF0096D3"  Height="53" HorizontalAlignment="Left"  x:Name="button2" Opacity="1" VerticalAlignment="Top" Width="128" Foreground="White" FontFamily="Times New Roman" FontSize="14" MouseEnter="button2_MouseEnter" MouseLeave="button2_MouseLeave" Click="button2_Click" />
-                    <Button Background="#FF0096D3" BorderBrush="#FF0096D3" BorderThickness="0" Content="Программалар" FontFamily="Times New Roman" FontSize="14" Foreground="White" Height="53" HorizontalAlignment="Left"  x:Name="button3" Opacity="1" VerticalAlignment="Top" Width="128" MouseEnter="button3_MouseEnter" MouseLeave="button3_MouseLeave" />
-                    <Button Background="#FF0096D3" BorderBrush="#FF0096D3" BorderThickness="0" Content="Запись в файл" FontFamily="Times New Roman" FontSize="14" Foreground="White" Height="53" HorizontalAlignment="Left"  x:Name="button4" Opacity="1" VerticalAlignment="Top" Width="96" MouseEnter="button4_MouseEnter" MouseLeave="button4_MouseLeave" Click="button4_Click" />
-                    <Button Background="#FF0096D3" BorderBrush="#FF0096D3" BorderThickness="0" Content="Admin" FontFamily="Times New Roman" FontSize="14" Foreground="White" Height="53" HorizontalAlignment="Left"  x:Name="button5" Opacity="1" VerticalAlignment="Top" Width="92" MouseLeave="button5_MouseLeave" MouseEnter="button5_MouseEnter" Click="button5_Click" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0 0 0 0" >
-                    <Image Source="Resources/tuv.png" Height="14"  x:Name="image2"  MouseEnter="image2_MouseEnter" MouseLeave="image2_MouseLeave" PreviewMouseUp="image2_PreviewMouseUp" />
-                    <Image Source="Resources/rus.png" Height="14"   x:Name="image3" VerticalAlignment="Top" Width="22" MouseEnter="image3_MouseEnter" MouseLeave="image3_MouseLeave" PreviewMouseUp="image3_PreviewMouseUp"  />
-                    <Image Source="Resources/brit.png" Height="14"  x:Name="image4" Stretch="Fill" VerticalAlignment="Top" Width="18" MouseEnter="image4_MouseEnter" MouseLeave="image4_MouseLeave" PreviewMouseUp="image4_PreviewMouseUp" />
+            <StackPanel Height="120" x:Name="Header" Background="#FF0096D3">
+                <StackPanel Orientation="Horizontal" Width="1200" HorizontalAlignment="Center">
+                    <Image VerticalAlignment="Center" HorizontalAlignment="Left" Height="107" Width="440" PreviewMouseUp="Image_PreviewMouseUp" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" x:Name="main_img"/>
+                    <StackPanel Orientation="Horizontal" Margin="240 0 0 0" VerticalAlignment="Center">
+                        <Button BorderThickness="0" Content="Чогаалчылар" Background="#FF0096D3" BorderBrush="#FF0096D3"  Height="53" x:Name="button2" Opacity="1" Width="128" Foreground="White" FontFamily="Times New Roman" FontSize="14" MouseEnter="button2_MouseEnter" MouseLeave="button2_MouseLeave" Click="button2_Click" />
+                        <Button Background="#FF0096D3" BorderBrush="#FF0096D3" BorderThickness="0" Content="Программалар" FontFamily="Times New Roman" FontSize="14" Foreground="White" Height="53" HorizontalAlignment="Left"  x:Name="button3" Opacity="1" VerticalAlignment="Top" Width="128" MouseEnter="button3_MouseEnter" MouseLeave="button3_MouseLeave" />
+                        <Button Background="#FF0096D3" BorderBrush="#FF0096D3" BorderThickness="0" Content="Запись в файл" FontFamily="Times New Roman" FontSize="14" Foreground="White" Height="53" HorizontalAlignment="Left"  x:Name="button4" Opacity="1" VerticalAlignment="Top" Width="96" MouseEnter="button4_MouseEnter" MouseLeave="button4_MouseLeave" Click="button4_Click" />
+                        <Button Background="#FF0096D3" BorderBrush="#FF0096D3" BorderThickness="0" Content="Admin" FontFamily="Times New Roman" FontSize="14" Foreground="White" Height="53" HorizontalAlignment="Left"  x:Name="button5" Opacity="1" VerticalAlignment="Top" Width="92" MouseLeave="button5_MouseLeave" MouseEnter="button5_MouseEnter" Click="button5_Click" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
+                        <Image Source="Resources/tuv.png" Height="14"  x:Name="image2"  MouseEnter="image2_MouseEnter" MouseLeave="image2_MouseLeave" PreviewMouseUp="image2_PreviewMouseUp" />
+                        <Image Source="Resources/rus.png" Height="14"   x:Name="image3" VerticalAlignment="Top" Width="22" MouseEnter="image3_MouseEnter" MouseLeave="image3_MouseLeave" PreviewMouseUp="image3_PreviewMouseUp"  />
+                        <Image Source="Resources/brit.png" Height="14"  x:Name="image4" Stretch="Fill" VerticalAlignment="Top" Width="18" MouseEnter="image4_MouseEnter" MouseLeave="image4_MouseLeave" PreviewMouseUp="image4_PreviewMouseUp" />
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Name="Content" Height="1170">
-                <StackPanel Name="main_tuv" Orientation="Vertical" HorizontalAlignment="Center">
+            <StackPanel Name="Content" Height="1170" HorizontalAlignment="Center" Width="1200">
+                <StackPanel Name="main_tuv" Orientation="Vertical" HorizontalAlignment="Center" Visibility="Collapsed">
                      <RichTextBox Height="202"  HorizontalAlignment="Left" x:Name="richTextBox1" Width="auto" Opacity="1" Visibility="Visible"  BorderThickness="0"/>
-                     <TreeView BorderThickness="0" Height="auto" HorizontalAlignment="Left" x:Name="tw2" VerticalAlignment="Top" Width="auto" Background="White" FontFamily="Comic Sans MS" FontSize="14" FontWeight="Bold" Foreground="Black" />
-                     <RichTextBox Margin="0 50 0 0" Height="380" HorizontalAlignment="Left" x:Name="richTextBox2" Opacity="1" Visibility="Visible" Width="auto" BorderThickness="0"/>
+                   <!-- <TreeView BorderThickness="0" Height="auto" HorizontalAlignment="Left" x:Name="tw2" VerticalAlignment="Top" Width="auto" Background="White" FontFamily="Comic Sans MS" FontSize="14" FontWeight="Bold" Foreground="Black" />-->
+                    <Canvas Height="630" Name="Map">
+                       <!--<TextBlock Name="text" FontFamily="Arial" FontSize="14" ></TextBlock>-->
+                    </Canvas>
+                     <RichTextBox Height="380" HorizontalAlignment="Left" x:Name="richTextBox2" Opacity="1" Visibility="Visible" Width="auto" BorderThickness="0"/>
                 </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0,163,0,0" x:Name="stack_distr" MaxWidth="1024" MinWidth="800">
+                <StackPanel Visibility="Collapsed" Orientation="Horizontal" x:Name="stack_distr" MaxWidth="1024" MinWidth="800">
                     <StackPanel Orientation="Vertical" Width="600" x:Name="writers" />
                     <StackPanel Margin="20 0 0 0" Orientation="Vertical" Width="auto" Height="auto">
                         <Image x:Name="distr_img"/>
                         <RichTextBox x:Name="dist_txt" MinWidth="400" MaxWidth="600" Height="auto" BorderThickness="0"/>
                     </StackPanel>
                 </StackPanel>
-                <StackPanel MaxWidth="1024" MinWidth="800" Height="auto" x:Name="pis_tuv" Margin="0 170 0 0" Orientation="Vertical" Visibility="Hidden">
+                <StackPanel Visibility="Collapsed" MaxWidth="1024" MinWidth="800" Height="auto" x:Name="pis_tuv" Orientation="Vertical">
                     <Label Content="Чогаалчылар" Height="31" HorizontalAlignment="Left" x:Name="label1" VerticalAlignment="Top" Width="145" FontFamily="Arial" FontWeight="Bold" FontSize="18" />
                     <StackPanel x:Name="poisk" Height="auto" Orientation="Horizontal">
                         <TextBox Height="27" HorizontalAlignment="Left"  x:Name="textBox1" VerticalAlignment="Top" Width="630" Margin="20" Text="Введите имя писателя для поиска" FontFamily="Arial" />
@@ -60,15 +65,15 @@
                             <ComboBoxItem Content="Бай-Тайга кожуун" x:Name="distr17" />
                             <ComboBoxItem Content="Мөңгүн-Тайга кожуун" x:Name="distr18" />
                         </ComboBox>
-                        <Button Margin="20"  Content="Дилээр" Height="27" HorizontalAlignment="Left"  x:Name="search" VerticalAlignment="Top" Width="111" FontFamily="Arial" Click="search_Click" />
+                        <Button  Content="Дилээр" Height="27" HorizontalAlignment="Left"  x:Name="search" VerticalAlignment="Top" Width="111" FontFamily="Arial" Click="search_Click" />
                     </StackPanel>
                     <StackPanel x:Name="writers2" Orientation="Vertical" />
                 </StackPanel>
 
-                <StackPanel Margin="0 165 0 0" MaxWidth="1500" MinWidth="1200" Height="998" HorizontalAlignment="Center"  x:Name="pisatel" VerticalAlignment="Center" Orientation="Horizontal">
-                    <StackPanel Orientation="Vertical" Name="Menu" Width="400" Height="auto" Margin="0 0 100 0"></StackPanel>
+                <StackPanel Visibility="Collapsed"  MaxWidth="1500" MinWidth="1200" Height="998" x:Name="pisatel" Orientation="Horizontal">
+                    <StackPanel Orientation="Vertical" Name="Menu" Width="400" Height="auto" ></StackPanel>
                     <WebBrowser Height="auto" x:Name="webbrowser" VerticalAlignment="Top" Width="800" Visibility="Collapsed"/>
-                    <TreeView  BorderThickness="1" Width="auto"  Name="TVMenu" Height="auto" Visibility="Collapsed"></TreeView>
+                    <TreeView  BorderThickness="0" Width="auto"  Name="TVMenu" Height="auto" Visibility="Collapsed"></TreeView>
                 </StackPanel>
             </StackPanel>
         </StackPanel>
