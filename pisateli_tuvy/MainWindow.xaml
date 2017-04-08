@@ -73,7 +73,9 @@
                 <StackPanel Visibility="Collapsed"  MaxWidth="1500" MinWidth="1200" Height="998" x:Name="pisatel" Orientation="Horizontal">
                     <StackPanel Orientation="Vertical" Name="Menu" Width="400" Height="auto" ></StackPanel>
                     <WebBrowser Height="auto" x:Name="webbrowser" VerticalAlignment="Top" Width="800" Visibility="Collapsed"/>
-                    <TreeView  BorderThickness="0" Width="auto"  Name="TVMenu" Height="auto" Visibility="Collapsed"></TreeView>
+                    <StackPanel Orientation="Vertical" Name="noname" Visibility="Collapsed">
+                        
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </StackPanel>

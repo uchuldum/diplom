@@ -25,6 +25,7 @@ namespace pisateli_tuvy
     {
         Connect con = new Connect();
         static string glob_autor = "";   ///// НОМЕР АВТОРА КОТОРОГО СМОТРЯТ
+        static string autor_folder = "";
         private static BitmapImage GetImage(string imageUri)
         {
             var bitmapImage = new BitmapImage();
@@ -128,8 +129,7 @@ namespace pisateli_tuvy
             try
             {
                 webbrowser.Visibility = Visibility.Visible;
-                string biographia = con.Reader("select chog_biografiya from chogaalchy where chog_id =" + id);
-                webbrowser.Navigate(path + biographia);///Вывод биографии писателя
+                webbrowser.Navigate(path +"pisateli\\" +autor_folder+"\\biographia.pdf");///Вывод биографии писателя
             }
             catch (Exception ex)
             {
@@ -144,8 +144,7 @@ namespace pisateli_tuvy
             try
             {
                 webbrowser.Visibility = Visibility.Visible;
-                string pis_rab = con.Reader("select azhyldary_text from azhyldary where azhyldary_uid =" + id);
-                webbrowser.Navigate(path+"pisateli\\"+pis_rab+"\\pisatel_rab.pdf");///Вывод биографии писателя
+                webbrowser.Navigate(path+"pisateli\\"+autor_folder+"\\pisatel_rab.pdf");///Вывод биографии писателя
             }
             catch (Exception ex)
             {
@@ -157,9 +156,13 @@ namespace pisateli_tuvy
         /////Выпущенные книги
         public void knigi(string id)
         {
+            TreeView TVMenu = new TreeView();
+            TVMenu.BorderThickness = new Thickness(0);
+            TVMenu.Name = "TVMENU";
+            noname.Children.Clear();
             try
             {
-                TVMenu.Visibility = Visibility.Visible;
+                noname.Visibility = Visibility.Visible;
                 webbrowser.Visibility = Visibility.Collapsed;
                 int count = Convert.ToInt32(con.ExecuteScalar("select count (*) from nomnary where nomnary_uid = " + glob_autor));
                 string[] kniga_name = con.Reader_Array("select nomnary_title from nomnary where nomnary_uid = " + glob_autor+ " order by nomnary_title", count);
@@ -179,14 +182,19 @@ namespace pisateli_tuvy
                 {
                     item.Header = kniga_name[k]+". "+kniga_name[k]+" "+kniga_janr[k]+" .- "+kniga_tipograph[k]+", "+kniga_date[k];
                     item.Tag = kniga_id[k];
-
-
-
                     item.MouseEnter += new MouseEventHandler(tv_item_MouseEnter);
-                    item.MouseLeave += new MouseEventHandler(tv_item_MouseLeave);
+                    item.MouseLeave += (s, e) =>
+                    {
+                        foreach(TreeViewItem item1 in TVMenu.Items)
+                        {
+                            Mouse.OverrideCursor = Cursors.Arrow;
+                            item1.Foreground = Brushes.Black;
+                        }
+                    };
                     item.PreviewMouseUp += new MouseButtonEventHandler(item_MouseUp);
                     k++;
                 }
+                noname.Children.Add(TVMenu);
             }
             catch (Exception ex)
             {
@@ -199,24 +207,49 @@ namespace pisateli_tuvy
             Mouse.OverrideCursor = Cursors.Hand;
             tvItem.Foreground = Brushes.Pink;
         }
-        private void tv_item_MouseLeave(object sender, System.EventArgs e)
-        {
-            foreach (TreeViewItem item in TVMenu.Items)
-            {
-                Mouse.OverrideCursor = Cursors.Arrow;
-                item.FontStyle = FontStyles.Normal;
-                item.Foreground = Brushes.Black;
-            }
-        }
+       
         private void item_MouseUp(object sender, EventArgs e)
         {
             TreeViewItem Item = (TreeViewItem)sender;
-            MessageBox.Show(Item.Tag+"");
+            try
+            {
+                int nom_id = Convert.ToInt32(Item.Tag);
+                string nom_name = con.Reader("select nomnary_text from nomnary where nomnary_id = "+nom_id);
+                string localpath = path + "pisateli\\" + autor_folder + "\\nomnary\\" + nom_name;
+                if (File.Exists(localpath))
+                {
+                    noname.Visibility = Visibility.Collapsed;
+                    webbrowser.Visibility = Visibility.Visible;
+                    webbrowser.Navigate(localpath);
+                }
+                else
+                {
+                    MessageBox.Show("Книги пока нет");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
         }
 
         //////
 
         /////Работы о писателе
+        public void raboty_about()
+        {
+            webbrowser.Visibility = Visibility.Collapsed;
+            noname.Children.Clear();
+            noname.Visibility = Visibility.Visible;
+            try
+            {
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
+        }
         //////
 
         /////Переводы работ писателя на другие языки
@@ -260,19 +293,40 @@ namespace pisateli_tuvy
             try
             {
                 main_tuv.Visibility = Visibility.Visible;
-                                                                              /////////////// КАРТА ////////
+
+                /////////////// КАРТА ////////
                 for (int i = 0; i < 18; ++i)
                 {
                     RoundedCornersPolygon map_pol = new RoundedCornersPolygon();
                     map_pol.ArcRoundness = 25;
-                 //   Polygon map_pol = new Polygon();
+                    //   Polygon map_pol = new Polygon();
                     map_pol.Stroke = Brushes.White;
-                    map_pol.Fill = Brushes.Blue;
+                    //map_pol.Fill = Brushes.Blue;
+                    var brush = new SolidColorBrush(Color.FromArgb(255, 0, 150, 211));
+                    map_pol.Fill = brush;
                     map_pol.StrokeThickness = 1;
                     string a = con.Reader("select coords from region where region_id = " + (i + 1).ToString());
                     map_pol.Tag = con.Reader("select r_name from region where region_id = " + (i + 1).ToString());
+                    string centr = con.Reader("select r_links from region where region_id = " + (i + 1).ToString());
                     //map_pol.Name = ;
                     string[] split = a.Split(new Char[] { ',' });
+                    string[] centr_arr = centr.Split(new Char[] { ',' });
+
+                    int centr_X = Convert.ToInt32(centr_arr[0]);
+                    int centr_Y = Convert.ToInt32(centr_arr[1]);
+
+                    Ellipse el = new Ellipse();
+                    el.Width = 10;
+                    el.Height = 10;
+                    el.StrokeThickness = 2;
+                    el.Stroke = Brushes.Black;
+                    el.Fill = Brushes.White;
+                    if (centr_X == 547 || centr_X == 514 || centr_X == 397 || centr_X == 270 || centr_X == 172)
+                    {
+                        el.Width = 15;
+                        el.Height = 15;
+                        el.StrokeThickness = 3;
+                    }
                     int k = split.Length;
                     for (int j = 0; j < k - 1; j = j + 2)
                     {
@@ -280,11 +334,15 @@ namespace pisateli_tuvy
                         int y = Convert.ToInt32(split[j + 1]);
                         map_pol.Points.Add(new Point(x, y));
                     }
+
                     Map.Children.Add(map_pol);
+                    Map.Children.Add(el);
+                    Canvas.SetLeft(el, centr_X);
+                    Canvas.SetTop(el, centr_Y);
                     map_pol.MouseEnter += new MouseEventHandler(item_MouseEnter);
+                    map_pol.MouseMove += new MouseEventHandler(item_MouseMove);
                     map_pol.MouseLeave += new MouseEventHandler(item_MouseLeave);
                     map_pol.PreviewMouseUp += new MouseButtonEventHandler(item_mouseUp);
-
                 }
             }
             catch (Exception ex)
@@ -293,19 +351,52 @@ namespace pisateli_tuvy
             }
 
         }
+        private void item_MouseMove(object sender, EventArgs e)
+        {
+            RoundedCornersPolygon p = (RoundedCornersPolygon)sender;
+            Point position = Mouse.GetPosition(Map);
+            TextBlock text = new TextBlock();
+            text.Text = p.Tag.ToString();
+            text.Name = "text_d";
+            text.FontFamily = new FontFamily("Comic Sans MS");
+            text.Foreground = Brushes.White;
+            int length = text.Text.Length;
+            Canvas.SetLeft(text, (position.X + 22));
+            Canvas.SetTop(text, (position.Y + 25));
+            Rectangle rect = new Rectangle();
+            rect.StrokeThickness = 1;
+            rect.Stroke = Brushes.Black;
+            rect.Fill = Brushes.Black;
+            rect.RadiusX = 5;
+            rect.RadiusY = 5;
+            rect.Name = "distr";
+            rect.Width = length * 8;
+            rect.Height = 30;
+            Canvas.SetLeft(rect, (position.X + 20));
+            Canvas.SetTop(rect, (position.Y + 20));
+            var rectangle = (UIElement)LogicalTreeHelper.FindLogicalNode(Map, "distr"); ////ОЧИСТКА ПРЕДЫДУЩЕГО
+            var text_dist = (UIElement)LogicalTreeHelper.FindLogicalNode(Map, "text_d");
+            Map.Children.Remove(rectangle);
+            Map.Children.Remove(text_dist);
+            Map.Children.Add(rect);
+            Map.Children.Add(text);
+        }
         private void item_MouseEnter(object sender, System.EventArgs e)
         {
-            RoundedCornersPolygon tvItem = (RoundedCornersPolygon)sender;
-            Point position = Mouse.GetPosition(Map);
+            RoundedCornersPolygon p = (RoundedCornersPolygon)sender;
             Mouse.OverrideCursor = Cursors.Hand;
-            tvItem.Fill = Brushes.Yellow;
+            p.Fill = Brushes.Yellow;
         }
         private void item_MouseLeave(object sender, System.EventArgs e)
         {
-
-            RoundedCornersPolygon tvItem = (RoundedCornersPolygon)sender;
+            var rectangle = (UIElement)LogicalTreeHelper.FindLogicalNode(Map, "distr"); ////ОЧИСТКА ПРЕДЫДУЩЕГО
+            var text_dist = (UIElement)LogicalTreeHelper.FindLogicalNode(Map, "text_d");
+            Map.Children.Remove(rectangle);
+            Map.Children.Remove(text_dist);
+            RoundedCornersPolygon p = (RoundedCornersPolygon)sender;
             Mouse.OverrideCursor = Cursors.Arrow;
-            tvItem.Fill = Brushes.Blue;
+            var brush = new SolidColorBrush(Color.FromArgb(255, 0, 150, 211));
+            p.Fill = brush;
         }
 
 
@@ -411,6 +502,7 @@ namespace pisateli_tuvy
             stack_distr.Visibility = Visibility.Collapsed;
             main_tuv.Visibility = Visibility.Collapsed;
             glob_autor = stP.Tag.ToString().Trim();
+            autor_folder = con.Reader("select folder from chogaalchy where chog_id = " + glob_autor);
             menu();
             biographia(glob_autor);
 
