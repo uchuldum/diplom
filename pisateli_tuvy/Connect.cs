@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
+using System.Windows.Media.Imaging;
+
 namespace pisateli_tuvy
 {
     class Connect
@@ -103,5 +105,14 @@ namespace pisateli_tuvy
             }
             return Output;
         }
+        public BitmapImage GetImage(string imageUri)
+        {
+            var bitmapImage = new BitmapImage();
+            bitmapImage.BeginInit();
+            bitmapImage.UriSource = new Uri(path + "\\all\\img\\" + imageUri, UriKind.RelativeOrAbsolute);
+            bitmapImage.EndInit();
+            return bitmapImage;
+        }
+
     }
 }

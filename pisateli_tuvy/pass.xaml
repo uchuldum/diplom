@@ -5,9 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pisateli_tuvy"
         mc:Ignorable="d"
-        Title="pass" Height="300" Width="300">
+        Title="pass" Height="432.558" Width="497.342">
     <Grid>
-        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Visibility="Collapsed" Name="Password">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock>Введите логин</TextBlock>
                 <TextBox Name="login"  Width="100" Margin="18,0,0,10" ></TextBox>
@@ -18,13 +18,46 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Height="20" HorizontalAlignment="Center">
                 <Button Content="Вход" Margin="0,0,10,0" Name="ok" Width="50" Click="ok_Click">
-
                 </Button>
                 <Button Content="Выход" Name="no" Width="50" Click="no_Click" >
-
                 </Button>
             </StackPanel>
-
+        </StackPanel>
+        <StackPanel Name="adminPanel" Visibility="Collapsed">
+            <StackPanel Name="Menu" Orientation="Horizontal" Margin="20 20 0 0">
+                <Border BorderBrush="Gray" BorderThickness="1">
+                    <StackPanel Name="Add" PreviewMouseUp="Add_PreviewMouseUp" >
+                        <TextBlock FontSize="14" Text="Добавить писателя"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Gray" BorderThickness="1" Margin="50 0 50 0">
+                    <StackPanel Name="Change" PreviewMouseUp="Change_PreviewMouseUp">
+                        <TextBlock FontSize="14" Text="Изменить писателя"/>
+                    </StackPanel>
+                </Border>
+                <Border BorderBrush="Gray" BorderThickness="1">
+                    <StackPanel Name="Delete" PreviewMouseUp="Delete_PreviewMouseUp">
+                        <TextBlock FontSize="14" Text="Удалить писателя"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Margin="20 20 0 0" Name="addWR" Orientation="Vertical" Visibility="Collapsed">
+            <StackPanel Orientation="Horizontal" Name="FIO">
+                <TextBox Width="100" Name="Surname" Text="Фамилия"></TextBox>
+                <TextBox Width="100" Name="Name" Text="Имя" Margin="30 0 30 0"></TextBox>
+                <TextBox Width="100" Name="Patronymic" Text="Отчество"></TextBox>
+            </StackPanel>
+            <Button Width="100" Content="Добавить" Margin="0 5 0 0" HorizontalAlignment="Left" Click="Button_Click"></Button>
+        </StackPanel>
+        <StackPanel  Margin="20 20 0 0" Name="searchWR" Orientation="Vertical" Visibility="Collapsed">
+            <StackPanel Orientation="Horizontal">
+                <TextBox Name="Familiya" Width="100"></TextBox>
+                <Button Name="Search" Content="Найти" Margin="20 0 0 0" Click="Search_Click"></Button>
+            </StackPanel>
+            <StackPanel Name="writers" HorizontalAlignment="Left">
+                
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Window>

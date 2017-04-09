@@ -57,8 +57,8 @@ namespace pisateli_tuvy
             for (int i=0;i<15;++i)
             {
                 StackPanel stp = new StackPanel();
+                stp.VerticalAlignment = VerticalAlignment.Center;
                 
-                stp.Background = Brushes.LightBlue;
                 stp.Margin = new Thickness(0,0,0,10);
                 stp.Width = Menu.Width;
                 stp.Tag = menu_id[i].Trim();
@@ -70,15 +70,19 @@ namespace pisateli_tuvy
                         stp.Margin = new Thickness(20, 0, 0, 10);
                     }
                 }
-                stp.Height = 15;
+                stp.Height = 40;
+                
                 TextBlock txb = new TextBlock();
+                txb.VerticalAlignment = VerticalAlignment.Center;
+                txb.TextWrapping = TextWrapping.Wrap;
                 txb.Width = stp.Width;
+                txb.FontSize = 16;
                 txb.Text = menu_item[i];
                 Menu.Children.Add(stp);
                 stp.Children.Add(txb);
                 stp.PreviewMouseUp += new MouseButtonEventHandler(stp_MouseUp);
                 stp.MouseEnter += new MouseEventHandler(stP_MouseEnter);
-                stp.MouseLeave += new MouseEventHandler(stP_MouseLeave);
+                stp.MouseLeave += new MouseEventHandler(stP_MouseLeave2);
             }
         }
         private void stp_MouseUp(object sender, System.EventArgs e)
@@ -95,17 +99,17 @@ namespace pisateli_tuvy
                     break;
                 case 3:knigi(glob_autor);
                     break;
-                case 4:
+                case 4: raboty_about(glob_autor);
                     break;
                 case 5:
                     break;
-                case 6:
+                case 6:perevod_other(glob_autor);
                     break;
-                case 7:
+                case 7:perevod_tuv(glob_autor);
                     break;
                 case 8:
                     break;
-                case 9:
+                case 9:stih_pes(glob_autor);
                     break;
                 case 10:
                     break;
@@ -128,8 +132,16 @@ namespace pisateli_tuvy
         {
             try
             {
-                webbrowser.Visibility = Visibility.Visible;
-                webbrowser.Navigate(path +"pisateli\\" +autor_folder+"\\biographia.pdf");///Вывод биографии писателя
+                if (File.Exists(path + "pisateli\\" + autor_folder + "\\biographia.pdf"))
+                {
+                    webbrowser.Visibility = Visibility.Visible;
+                    webbrowser.Navigate(path + "pisateli\\" + autor_folder + "\\biographia.pdf");///Вывод биографии писателя
+                }
+                else
+                {
+                    webbrowser.Visibility = Visibility.Collapsed;
+                    MessageBox.Show("Биографию еще не внесли");
+                }
             }
             catch (Exception ex)
             {
@@ -143,8 +155,16 @@ namespace pisateli_tuvy
         {
             try
             {
-                webbrowser.Visibility = Visibility.Visible;
-                webbrowser.Navigate(path+"pisateli\\"+autor_folder+"\\pisatel_rab.pdf");///Вывод биографии писателя
+                if (File.Exists(path + "pisateli\\" + autor_folder + "\\pisatel_rab.pdf"))
+                {
+                    webbrowser.Visibility = Visibility.Visible;
+                    webbrowser.Navigate(path + "pisateli\\" + autor_folder + "\\pisatel_rab.pdf");///Вывод биографии писателя
+                }
+                else
+                {
+                    webbrowser.Visibility = Visibility.Collapsed;
+                    MessageBox.Show("Писательскую работу еще не внесли");
+                }
             }
             catch (Exception ex)
             {
@@ -156,22 +176,20 @@ namespace pisateli_tuvy
         /////Выпущенные книги
         public void knigi(string id)
         {
-            TreeView TVMenu = new TreeView();
-            TVMenu.BorderThickness = new Thickness(0);
-            TVMenu.Name = "TVMENU";
+            TVMenu.Items.Clear();
             noname.Children.Clear();
             try
             {
                 noname.Visibility = Visibility.Visible;
                 webbrowser.Visibility = Visibility.Collapsed;
-                int count = Convert.ToInt32(con.ExecuteScalar("select count (*) from nomnary where nomnary_uid = " + glob_autor));
-                string[] kniga_name = con.Reader_Array("select nomnary_title from nomnary where nomnary_uid = " + glob_autor+ " order by nomnary_title", count);
-                string[] kniga_id = con.Reader_Array("select nomnary_id from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
-                string[] kniga_janr = con.Reader_Array("select nomnary_zhanr from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
-                string[] kniga_date = con.Reader_Array("select nomnary_god from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
-                string[] kniga_tipograph = con.Reader_Array("select nomnary_tipograph from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
-                string[] kniga_str = con.Reader_Array("select nomnary_stranisy from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
-                string[] kniga_text = con.Reader_Array("select nomnary_text from nomnary where nomnary_uid = " + glob_autor + " order by nomnary_title", count);
+                int count = Convert.ToInt32(con.ExecuteScalar("select count (*) from nomnary where nomnary_uid = " + id));
+                string[] kniga_name = con.Reader_Array("select nomnary_title from nomnary where nomnary_uid = " + id+ " order by nomnary_title", count);
+                string[] kniga_id = con.Reader_Array("select nomnary_id from nomnary where nomnary_uid = " + id + " order by nomnary_title", count);
+                string[] kniga_janr = con.Reader_Array("select nomnary_zhanr from nomnary where nomnary_uid = " + id + " order by nomnary_title", count);
+                string[] kniga_date = con.Reader_Array("select nomnary_god from nomnary where nomnary_uid = " + id + " order by nomnary_title", count);
+                string[] kniga_tipograph = con.Reader_Array("select nomnary_tipograph from nomnary where nomnary_uid = " + id + " order by nomnary_title", count);
+                string[] kniga_str = con.Reader_Array("select nomnary_stranisy from nomnary where nomnary_uid = " + id + " order by nomnary_title", count);
+                string[] kniga_text = con.Reader_Array("select nomnary_text from nomnary where nomnary_uid = " + id + " order by nomnary_title", count);
                 for (int i=0;i<count;i++)
                 {
                     TreeViewItem TVitem = new TreeViewItem();
@@ -180,25 +198,36 @@ namespace pisateli_tuvy
                 int k = 0;
                 foreach(TreeViewItem item in TVMenu.Items)
                 {
-                    item.Header = kniga_name[k]+". "+kniga_name[k]+" "+kniga_janr[k]+" .- "+kniga_tipograph[k]+", "+kniga_date[k];
+                    item.Header = (k+1)+". "+kniga_name[k]+". "+kniga_name[k]+" "+kniga_janr[k]+" .- "+kniga_tipograph[k]+", "+kniga_date[k];
                     item.Tag = kniga_id[k];
                     item.MouseEnter += new MouseEventHandler(tv_item_MouseEnter);
-                    item.MouseLeave += (s, e) =>
-                    {
-                        foreach(TreeViewItem item1 in TVMenu.Items)
-                        {
-                            Mouse.OverrideCursor = Cursors.Arrow;
-                            item1.Foreground = Brushes.Black;
-                        }
-                    };
+                    item.MouseLeave += new MouseEventHandler(tv_item_MouseLeave);
                     item.PreviewMouseUp += new MouseButtonEventHandler(item_MouseUp);
                     k++;
                 }
+                TextBlock text = new TextBlock();
+                text.Text = "Парлаттынып үнген чогаалдары";
+                text.FontSize = 16;
+                text.Margin = new Thickness(0, 0, 0, 10);
+                noname.Children.Add(text);
                 noname.Children.Add(TVMenu);
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex + "");
+            }
+        }
+        private void tv_item_MouseLeave(object sender, System.EventArgs e)
+        {
+            foreach (TreeViewItem item1 in TVMenu.Items)
+            {
+                Mouse.OverrideCursor = Cursors.Arrow;
+                item1.Foreground = Brushes.Black;
+            }
+            foreach (TreeViewItem item1 in TVMenu2.Items)
+            {
+                Mouse.OverrideCursor = Cursors.Arrow;
+                item1.Foreground = Brushes.Black;
             }
         }
         private void tv_item_MouseEnter(object sender, System.EventArgs e)
@@ -236,32 +265,280 @@ namespace pisateli_tuvy
         //////
 
         /////Работы о писателе
-        public void raboty_about()
+        public void raboty_about(string id)
         {
             webbrowser.Visibility = Visibility.Collapsed;
+            TVMenu.Items.Clear();
             noname.Children.Clear();
             noname.Visibility = Visibility.Visible;
             try
             {
-
+                /////DESIGN
+                TextBlock azhyldar = new TextBlock();
+                azhyldar.Text = "Чогаалчының дугайында ажылдар";
+                azhyldar.FontSize = 20;
+                azhyldar.Margin = new Thickness(0, 0, 0, 5);
+                TextBlock tyvatyl = new TextBlock();
+                tyvatyl.Text = "Тыва дылда";
+                tyvatyl.FontSize = 16;
+                TextBlock orustyl = new TextBlock();
+                orustyl.Text = "Орус дылда";
+                orustyl.FontSize = 16;
+                orustyl.Margin = new Thickness(0, 0, 0, 5);
+                ////ACTION
+                noname.Children.Add(azhyldar);
+                noname.Children.Add(tyvatyl);
+                /////TUV LANGUAGE
+                int count = Convert.ToInt32(con.ExecuteScalar("select count (*) from chog_dug_azhyldar where chdugazh_uid = " + id+" and chdugazh_log like 'tyv'"));
+                string[] kniga = con.Reader_Array("select chdugazh_id from chog_dug_azhyldar where chdugazh_uid = " + id + " and chdugazh_log like 'tyv'order by chdugazh_avtor", count);
+                string[] autor = con.Reader_Array("select chdugazh_avtor from chog_dug_azhyldar where chdugazh_uid = " + id + " and chdugazh_log like 'tyv'order by chdugazh_avtor", count);
+                string[] title = con.Reader_Array("select chdugazh_title from chog_dug_azhyldar where chdugazh_uid = " + id + " and chdugazh_log like 'tyv'order by chdugazh_avtor", count);
+                string[] istochnik = con.Reader_Array("select chdugazh_istochnik from chog_dug_azhyldar where chdugazh_uid = " + id + " and chdugazh_log like 'tyv'order by chdugazh_avtor", count);
+                string[] year = con.Reader_Array("select chdugazh_god from chog_dug_azhyldar where chdugazh_uid = " + id + " and chdugazh_log like 'tyv'order by chdugazh_avtor", count);
+                for (int i = 0; i < count; ++i)
+                {
+                    TreeViewItem item = new TreeViewItem();
+                    item.Header = (i+1)+". "+autor[i]+". "+title[i]+"// "+istochnik[i]+". - "+year[i]+".";
+                    TVMenu.Items.Add(item);
+                    item.Tag = kniga[i];
+                    item.MouseEnter += new MouseEventHandler(tv_item_MouseEnter);
+                    item.MouseLeave += new MouseEventHandler(tv_item_MouseLeave);
+                    item.PreviewMouseUp += (s, e) =>
+                    {
+                        int localid = Convert.ToInt32(item.Tag);
+                        string localtext = con.Reader("select chdugazh_text from chog_dug_azhyldar where chdugazh_id = "+localid);
+                        string localpath = path + "pisateli\\" + autor_folder + "\\chog_dug_azhyldary\\" + localtext + ".pdf";
+                        if (File.Exists(localpath))
+                        {
+                            noname.Visibility = Visibility.Collapsed;
+                            webbrowser.Visibility = Visibility.Visible;
+                            webbrowser.Navigate(localpath);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Пока нет работ");
+                        }
+                    };
+                }
+                noname.Children.Add(TVMenu);
+                TVMenu.Margin = new Thickness(0, 0, 0, 5);
+                noname.Children.Add(orustyl);
+                ///////ORUS LANGUAGE
+                count = Convert.ToInt32(con.ExecuteScalar("select count (*) from chog_dug_azhyldar where chdugazh_uid = " + id + " and chdugazh_log like 'rus'"));
+                kniga = con.Reader_Array("select chdugazh_id from chog_dug_azhyldar where chdugazh_uid = " + id + " and chdugazh_log like 'rus'order by chdugazh_avtor", count);
+                autor = con.Reader_Array("select chdugazh_avtor from chog_dug_azhyldar where chdugazh_uid = " + id + " and chdugazh_log like 'rus'order by chdugazh_avtor", count);
+                title = con.Reader_Array("select chdugazh_title from chog_dug_azhyldar where chdugazh_uid = " + id + " and chdugazh_log like 'rus'order by chdugazh_avtor", count);
+                istochnik = con.Reader_Array("select chdugazh_istochnik from chog_dug_azhyldar where chdugazh_uid = " + id + " and chdugazh_log like 'rus'order by chdugazh_avtor", count);
+                year = con.Reader_Array("select chdugazh_god from chog_dug_azhyldar where chdugazh_uid = " + id + " and chdugazh_log like 'rus'order by chdugazh_avtor", count);
+                for (int i = 0; i < count; ++i)
+                {
+                    TreeViewItem item = new TreeViewItem();
+                    item.Header = (i + 1) + ". " + autor[i] + ". " + title[i] + "// " + istochnik[i] + ". - " + year[i] + ".";
+                    TVMenu2.Items.Add(item);
+                    item.Tag = kniga[i];
+                    item.MouseEnter += new MouseEventHandler(tv_item_MouseEnter);
+                    item.MouseLeave += new MouseEventHandler(tv_item_MouseLeave);
+                    item.PreviewMouseUp += (s, e) =>
+                    {
+                        int localid = Convert.ToInt32(item.Tag);
+                        string localtext = con.Reader("select chdugazh_text from chog_dug_azhyldar where chdugazh_id = " + localid);
+                        string localpath = path + "pisateli\\" + autor_folder + "\\chog_dug_azhyldary\\" + localtext + ".pdf";
+                        if (File.Exists(localpath))
+                        {
+                            noname.Visibility = Visibility.Collapsed;
+                            webbrowser.Visibility = Visibility.Visible;
+                            webbrowser.Navigate(localpath);
+                        }
+                        else MessageBox.Show("Пока нет работ");
+                    };
+                }
+                noname.Children.Add(TVMenu2);
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex + "");
             }
         }
+       
         //////
 
         /////Переводы работ писателя на другие языки
+        public void perevod_other(string id)
+        {
+            webbrowser.Visibility = Visibility.Collapsed;
+            noname.Children.Clear();
+            TVMenu.Items.Clear();
+            TVMenu2.Items.Clear();
+            noname.Visibility = Visibility.Visible;
+            try
+            {
+                ////DESIGN
+                TextBlock perevod = new TextBlock();
+                perevod.Text = "Чогаалчының ажылдарының өске дылдарже очулгазы";
+                perevod.FontSize = 20;
+                perevod.Margin = new Thickness(0, 0, 0, 5);
+                noname.Children.Add(perevod);
+                //////ACTION
+                int count = con.ExecuteScalar("select count (*) from ochulgalary where ochulgalary_uid = " + id + " and ochulgalary_log like 'oth'");
+                string[] kniga = con.Reader_Array("select ochulgalary_id from ochulgalary where ochulgalary_uid = " + id + "  and ochulgalary_log like 'oth' order by ochulgalary_title", count);
+                string[] title = con.Reader_Array("select ochulgalary_title from ochulgalary where ochulgalary_uid = " + id + "  and ochulgalary_log like 'oth' order by ochulgalary_title", count);
+                string[] perevodchik = con.Reader_Array("select ochulgalary_perevodchik from ochulgalary where ochulgalary_uid = " + id + "  and ochulgalary_log like 'oth' order by ochulgalary_title", count);
+                string[] tipograph = con.Reader_Array("select ochulgalary_tipograph from ochulgalary where ochulgalary_uid = " + id + "  and ochulgalary_log like 'oth' order by ochulgalary_title", count);
+                string[] year = con.Reader_Array("select ochulgalary_god from ochulgalary where ochulgalary_uid = " + id + "  and ochulgalary_log like 'oth' order by ochulgalary_title", count);
+                for (int i = 0; i < count; ++i)
+                {
+                    TreeViewItem item = new TreeViewItem();
+                    item.Header = (i + 1) + ". " + title[i] + ":/ " + perevodchik[i] + " - " + tipograph[i] + ", " + year[i] + ".";
+                    TVMenu.Items.Add(item);
+                    item.Tag = kniga[i];
+                    item.MouseEnter += new MouseEventHandler(tv_item_MouseEnter);
+                    item.MouseLeave += new MouseEventHandler(tv_item_MouseLeave);
+                    item.PreviewMouseUp += (s, e) =>
+                    {
+                        int localid = Convert.ToInt32(item.Tag);
+                        string localtext = con.Reader("select ochulgalary_text from ochulgalary where ochulgalary_id = " + localid);
+                        string localpath = path + "pisateli\\" + autor_folder + "\\perevod_other\\" + localtext + ".pdf";
+                        if (File.Exists(localpath))
+                        {
+                            noname.Visibility = Visibility.Collapsed;
+                            webbrowser.Visibility = Visibility.Visible;
+                            webbrowser.Navigate(localpath);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Пока нет работ");
+                        }
+                    };
+                }
+                noname.Children.Add(TVMenu);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
+        }
         //////
 
         /////Переводы с других языков на тувинский язык
+        public void perevod_tuv(string id)
+        {
+            webbrowser.Visibility = Visibility.Collapsed;
+            noname.Children.Clear();
+            TVMenu.Items.Clear();
+            TVMenu2.Items.Clear();
+            noname.Visibility = Visibility.Visible;
+            try
+            {
+                ////DESIGN
+                TextBlock perevod = new TextBlock();
+                perevod.Text = "Өске чогаалдарны тыва дылче чогаалчының очулдурганы";
+                perevod.FontSize = 20;
+                perevod.Margin = new Thickness(0, 0, 0, 5);
+                noname.Children.Add(perevod);
+                //////ACTION
+                int count = con.ExecuteScalar("select count (*) from ochulgalary where ochulgalary_uid = " + id + " and ochulgalary_log like 'tyv'");
+                string[] kniga = con.Reader_Array("select ochulgalary_id from ochulgalary where ochulgalary_uid = " + id + "  and ochulgalary_log like 'tyv' order by ochulgalary_autor", count);
+                string[] autor = con.Reader_Array("select ochulgalary_autor from ochulgalary where ochulgalary_uid = " + id + "  and ochulgalary_log like 'tyv' order by ochulgalary_autor", count);
+                string[] title = con.Reader_Array("select ochulgalary_title from ochulgalary where ochulgalary_uid = " + id + "  and ochulgalary_log like 'tyv' order by ochulgalary_autor", count);
+                string[] perevodchik = con.Reader_Array("select ochulgalary_perevodchik from ochulgalary where ochulgalary_uid = " + id + "  and ochulgalary_log like 'tyv' order by ochulgalary_autor", count);
+                string[] tipograph = con.Reader_Array("select ochulgalary_tipograph from ochulgalary where ochulgalary_uid = " + id + "  and ochulgalary_log like 'tyv' order by ochulgalary_autor", count);
+                string[] year = con.Reader_Array("select ochulgalary_god from ochulgalary where ochulgalary_uid = " + id + "  and ochulgalary_log like 'tyv' order by ochulgalary_autor", count);
+                for (int i = 0; i < count; ++i)
+                {
+                    TreeViewItem item = new TreeViewItem();
+                    item.Header = (i + 1) + ". "+autor[i]+" " + title[i] + ":/ " + perevodchik[i] + " - " + tipograph[i] + ", " + year[i] + ".";
+                    TVMenu.Items.Add(item);
+                    item.Tag = kniga[i];
+                    item.MouseEnter += new MouseEventHandler(tv_item_MouseEnter);
+                    item.MouseLeave += new MouseEventHandler(tv_item_MouseLeave);
+                    item.PreviewMouseUp += (s, e) =>
+                    {
+                        int localid = Convert.ToInt32(item.Tag);
+                        string localtext = con.Reader("select ochulgalary_text from ochulgalary where ochulgalary_id = " + localid);
+                        string localpath = path + "pisateli\\" + autor_folder + "\\perevod_tuv\\" + localtext + ".pdf";
+                        if (File.Exists(localpath))
+                        {
+                            noname.Visibility = Visibility.Collapsed;
+                            webbrowser.Visibility = Visibility.Visible;
+                            webbrowser.Navigate(localpath);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Пока нет работ");
+                        }
+                    };
+                }
+                noname.Children.Add(TVMenu);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
+        }
         //////
 
         /////Публицистика
         //////
 
         /////Стихотворения ставшие песнями
+        public void stih_pes(string id)
+        {
+            webbrowser.Visibility = Visibility.Collapsed;
+            noname.Children.Clear();
+            TVMenu.Items.Clear();
+            TVMenu2.Items.Clear();
+            noname.Visibility = Visibility.Visible;
+            try
+            {
+                ////DESIGN
+                TextBlock perevod = new TextBlock();
+                perevod.Text = "Ыры апарган шүлүктериниң сөзүлелдери";
+                perevod.FontSize = 20;
+                perevod.Margin = new Thickness(0, 0, 0, 5);
+                TextBlock perevod1 = new TextBlock();
+                perevod1.Text = "Ыры апарган шүлүктериниң даңзызы";
+                perevod1.FontSize = 16;
+                perevod1.Margin = new Thickness(0, 0, 0, 5);
+                noname.Children.Add(perevod);
+                noname.Children.Add(perevod1);
+                //////ACTION
+                int count = con.ExecuteScalar("select count (*) from yry_apargan_shulukteri where yry_apsh_uid = " + id);
+                string[] yry_id = con.Reader_Array("select yry_apsh_id from yry_apargan_shulukteri where yry_apsh_uid  = " + id + "", count);
+                string[] yry_music = con.Reader_Array("select  yry_apsh_muz from yry_apargan_shulukteri where yry_apsh_uid  = " + id + "", count);
+                string[] yry_title = con.Reader_Array("select  yry_apsh_title from yry_apargan_shulukteri where yry_apsh_uid  = " + id + "", count);
+                string[] yry_year = con.Reader_Array("select  yry_apsh_god from yry_apargan_shulukteri where yry_apsh_uid  = " + id + "", count);
+                for (int i = 0; i < count; ++i)
+                {
+                    TreeViewItem item = new TreeViewItem();
+                    item.Header = (i + 1) + ". " + yry_title[i] + "-" + yry_music[i]; 
+                    TVMenu.Items.Add(item);
+                    item.Tag = yry_id[i];
+                    item.MouseEnter += new MouseEventHandler(tv_item_MouseEnter);
+                    item.MouseLeave += new MouseEventHandler(tv_item_MouseLeave);
+                    item.PreviewMouseUp += (s, e) =>
+                    {
+                        int localid = Convert.ToInt32(item.Tag);
+                        string localtext = con.Reader("select yry_apsh_text from yry_apargan_shulukteri where yry_apsh_id = " + localid);
+                        string localpath = path + "pisateli\\" + autor_folder + "\\pesni\\" + localtext + ".pdf";
+                        if (File.Exists(localpath))
+                        {
+                            noname.Visibility = Visibility.Collapsed;
+                            webbrowser.Visibility = Visibility.Visible;
+                            webbrowser.Navigate(localpath);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Пока нет работ");
+                        }
+                    };
+                }
+                noname.Children.Add(TVMenu);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
+        }
         //////
 
         /////Иллюстрации к произведениям
@@ -486,18 +763,35 @@ namespace pisateli_tuvy
         private void stP_MouseEnter(object sender, System.EventArgs e)
         {
             StackPanel stp = (StackPanel)sender;
+            var text = stp.Children.OfType<TextBlock>().FirstOrDefault();
+            text.FontStyle = FontStyles.Oblique;
+            stp.Background = Brushes.LightBlue;
             Mouse.OverrideCursor = Cursors.Hand;
         }
         private void stP_MouseLeave(object sender, System.EventArgs e)
         {
             StackPanel stp = (StackPanel)sender;
             Mouse.OverrideCursor = Cursors.Arrow;
-        }
+            var text = stp.Children.OfType<TextBlock>().FirstOrDefault();
+            text.FontStyle = FontStyles.Normal;
+            stp.Background = Brushes.LightSteelBlue;
 
+        }
+        private void stP_MouseLeave2(object sender, System.EventArgs e)
+        {
+            StackPanel stp = (StackPanel)sender;
+            Mouse.OverrideCursor = Cursors.Arrow;
+            var text = stp.Children.OfType<TextBlock>().FirstOrDefault();
+            text.FontStyle = FontStyles.Normal;
+            stp.Background = Brushes.White;
+
+        }
         /////////////////////////////////////////////НАЖАТИЕ НА ПИСАТЕЛЯ В КОЖУУНАХ
         private void stP_MouseUp(object sender, System.EventArgs e)
         {
+
             StackPanel stP = (StackPanel)sender;
+            pis_tuv.Visibility = Visibility.Collapsed;
             pisatel.Visibility = Visibility.Visible;
             stack_distr.Visibility = Visibility.Collapsed;
             main_tuv.Visibility = Visibility.Collapsed;
@@ -508,8 +802,6 @@ namespace pisateli_tuvy
 
         }
         public static string path = System.AppDomain.CurrentDomain.BaseDirectory;
-        static DataGrid[] a = new DataGrid[5];
-        string connectionstring = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + path + "\\writers.accdb";
         ////////WINDOW_Loaded
         public void main()
         {
@@ -537,29 +829,6 @@ namespace pisateli_tuvy
             }
 
         }
-        /////////////////////////////////////Видимость нужного DATAGRID
-        public void vis_datagrid(DataGrid b)
-        {
-            vis();
-            for (int i = 0; i < 5; i++)
-            {
-                if (b == a[i]) b.Visibility = Visibility.Visible;
-                else a[i].Visibility = Visibility.Hidden;
-            }
-
-        }
-        private void LoadTextDocument(string fileName, RichTextBox rtbMain)
-        {
-            if (File.Exists(fileName))
-            {
-                var range = new TextRange(rtbMain.Document.ContentStart, rtbMain.Document.ContentEnd);
-                var fStream = new FileStream(fileName, FileMode.OpenOrCreate);
-                range.Load(fStream, DataFormats.Text);
-                fStream.Close();
-            }
-        }
-        
-       
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             main();
@@ -608,7 +877,6 @@ namespace pisateli_tuvy
                                                                          /////////////////НАЖАТИЕ НА КНОПКУ ПИСАТЕЛИ
         private void button2_Click(object sender, RoutedEventArgs e)
         {
-
             ////////VISIBILITY
             main_tuv.Visibility = Visibility.Collapsed;
             stack_distr.Visibility = Visibility.Collapsed;
@@ -621,6 +889,7 @@ namespace pisateli_tuvy
             {
                 ////////Писатель
                 int count = con.ExecuteScalar("select count (*) from chogaalchy");
+                string[] pis_id = con.Reader_Array("select chog_id from chogaalchy order by chog_fam", count);
                 string[] pis_surname = con.Reader_Array("select chog_fam from chogaalchy order by chog_fam", count);
                 string[] pis_name = con.Reader_Array("select chog_imya from chogaalchy order by chog_fam", count);
                 string[] pis_patronymic = con.Reader_Array("select chog_otch from chogaalchy order by chog_fam", count);
@@ -652,7 +921,7 @@ namespace pisateli_tuvy
                     stP2.MouseEnter += new System.Windows.Input.MouseEventHandler(stP_MouseEnter);
                     stP2.MouseLeave += new System.Windows.Input.MouseEventHandler(stP_MouseLeave);
                     stP2.PreviewMouseUp += new System.Windows.Input.MouseButtonEventHandler(stP_MouseUp);
-                    stP2.Tag = i+1;
+                    stP2.Tag = pis_id[i];
                 }
             }
             catch (Exception ex)
@@ -660,51 +929,10 @@ namespace pisateli_tuvy
                 MessageBox.Show(ex + "");
             }
         }
-
-        private void button7_Click(object sender, RoutedEventArgs e)
-        {
-            for (int i = 0; i < 5; i++) a[i].Visibility = Visibility.Hidden;
-            vis();
-            //treeView1.Visibility = Visibility.Visible;
-         //   richTextBox3.Visibility = Visibility.Visible;
-            string str = "select w_biog  from writer where w_ws = 1";
-            string biog = "";
-            using (OleDbConnection con = new OleDbConnection(connectionstring))
-            {
-                OleDbCommand com = new OleDbCommand(str, con);
-                con.Open();
-                OleDbDataReader reader = com.ExecuteReader();
-                while (reader.Read())
-                {
-                    biog = reader.GetValue(0).ToString();
-                }
-                reader.Close();
-                con.Close();
-            }
-
-            TextRange range;
-            FileStream fStream;
-          /*  if (File.Exists(path + biog))
-            {
-                range = new TextRange(this.richTextBox3.Document.ContentStart, this.richTextBox3.Document.ContentEnd);
-                fStream = new FileStream(path + biog, FileMode.OpenOrCreate);
-                range.Load(fStream, DataFormats.Rtf);
-                fStream.Close();
-            }*/
-        }
-        private void button1_Click(object sender, RoutedEventArgs e)
-        {
-            this.pis_tuv.Visibility = Visibility.Hidden;
-            this.pisatel.Visibility = Visibility.Hidden;
-            this.main_tuv.Visibility = Visibility.Visible;
-        }
-
-       
         private void Image_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
             main();
         }
-
         private void Image_MouseEnter(object sender, MouseEventArgs e)
         {
             Mouse.OverrideCursor = Cursors.Hand;
@@ -714,7 +942,7 @@ namespace pisateli_tuvy
         {
             Mouse.OverrideCursor = Cursors.Arrow;
         }
-
+                                                                                                        ///////////ПОИСК ПИСАТЕЛЯ
         private void search_Click(object sender, RoutedEventArgs e)
         {
             
@@ -759,22 +987,6 @@ namespace pisateli_tuvy
             button5.Content = "Кирери";
             label1.Content = "Чогаалчылар";
             search.Content = "Дилээр";
-           /* t1.Header = "Чогаалчының намдары";
-            t2.Header = "Чогаадыкчы ажыл-чорудулгазы";
-            t3.Header = "Үндүрген номнары";
-            t4.Header = "Чогаалчының дугайында ажылдар";
-            t5.Header = "Очулгалары";
-            t6.Header = "Публицистика";
-            t7.Header = "Ыры апарган шүлүктери";
-            t51.Header = "Чогаалчының ажылдарының өске дылдарже очулгазы";
-            t52.Header = "Өске чогаалдарны тыва дылче чогаалчының очулдурганы";
-            t8.Header = "Галерея";
-            t81.Header = "Чогаалдарга иллюстрациялар";
-            t82.Header = "Чуруктар";
-            t83.Header = "Аудиоматериалдар";
-            t84.Header = "Видеоматериалдар";
-            t85.Header = "Презентация";*/
-
         }
 
         private void image3_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -786,21 +998,6 @@ namespace pisateli_tuvy
             button5.Content = "Вход";
             label1.Content = "Писатели";
             search.Content = "Поиск";
-            /*t1.Header = "Биография писателя";
-            t2.Header = "Писательская работа";
-            t3.Header = "Выпущенные книги";
-            t4.Header = "Работы о писателе";
-            t5.Header = "Переводы";
-            t6.Header = "Публицистика";
-            t7.Header = "Стихотворения ставшие песнями";
-            t51.Header = "Перевод произведений писателя на другие языки";
-            t52.Header = "Перевод других произведений на тувинский язык";
-            t8.Header = "Галерея";
-            t81.Header = "Иллюстрации к произведениям";
-            t82.Header = "Фотографии";
-            t83.Header = "Аудиоматериалы";
-            t84.Header = "Видеоматериалы";
-            t85.Header = "Презентация";*/
         }
 
         private void image4_PreviewMouseUp(object sender, MouseButtonEventArgs e)
@@ -812,95 +1009,6 @@ namespace pisateli_tuvy
             button5.Content = "Log in";
             label1.Content = "Writers";
             search.Content = "Search";
-            /*t1.Header = "Writer biography";
-            t2.Header = "Literary work";
-            t3.Header = "Issued books";
-            t4.Header = "The works about the writer";
-            t5.Header = "Translations";
-            t6.Header = "Publicism";
-            t7.Header = "The poems become songs";
-            t51.Header = "Translation of the writer's works into other languages";
-            t52.Header = "Translation of other works in the Tuvan language";
-            t8.Header = "Gallery";
-            t81.Header = "Illustrations to the works";
-            t82.Header = "Photographs";
-            t83.Header = "Audio materials";
-            t84.Header = "Video materials";
-            t85.Header = "Presentation";*/
-        }
-
-
-        private void TreeViewItem_MouseEnter(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Hand;
-            //t1.FontStyle = FontStyles.Oblique;
-        }
-
-        private void TreeViewItem_MouseLeave(object sender, MouseEventArgs e)
-        {
-            Mouse.OverrideCursor = Cursors.Arrow;
-           // t1.FontStyle = FontStyles.Normal;
-        }
-        private void t1_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            for (int i = 0; i < 5; i++) a[i].Visibility = Visibility.Hidden;
-            vis();
-           // richTextBox3.Visibility = Visibility.Visible;
-            string str = "select ws_biog from all_writers where ws_id = " + glob_autor;
-            string biog = "";
-            using (OleDbConnection con = new OleDbConnection(connectionstring))
-            {
-                OleDbCommand com = new OleDbCommand(str, con);
-                con.Open();
-                OleDbDataReader reader = com.ExecuteReader();
-                while (reader.Read())
-                {
-                    biog = reader.GetValue(0).ToString();
-                }
-                reader.Close();
-                con.Close();
-            }
-
-           /* TextRange range;
-            FileStream fStream;
-            if (File.Exists(path + biog))
-            {
-                range = new TextRange(this.richTextBox3.Document.ContentStart, this.richTextBox3.Document.ContentEnd);
-                fStream = new FileStream(path + biog, FileMode.OpenOrCreate);
-                range.Load(fStream, DataFormats.Rtf);
-                fStream.Close();
-            }*/
-
-        }
-        private void t2_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            for (int i = 0; i < 5; i++) a[i].Visibility = Visibility.Hidden;
-            vis();
-          //  richTextBox3.Visibility = Visibility.Visible;
-            string str = "select ws_piswork from all_writers where ws_id =" + glob_autor;
-            string biog = "";
-            using (OleDbConnection con = new OleDbConnection(connectionstring))
-            {
-                OleDbCommand com = new OleDbCommand(str, con);
-                con.Open();
-                OleDbDataReader reader = com.ExecuteReader();
-                while (reader.Read())
-                {
-                    biog = reader.GetValue(0).ToString();
-                }
-                reader.Close();
-                con.Close();
-            }
-
-          /*  TextRange range;
-            FileStream fStream;
-            if (File.Exists(path + biog))
-            {
-                range = new TextRange(this.richTextBox3.Document.ContentStart, this.richTextBox3.Document.ContentEnd);
-                fStream = new FileStream(path + biog, FileMode.OpenOrCreate);
-                range.Load(fStream, DataFormats.Rtf);
-                fStream.Close();
-            }*/
         }
         private void button5_Click(object sender, RoutedEventArgs e)
         {
@@ -913,7 +1021,6 @@ namespace pisateli_tuvy
             filewrite fw = new filewrite();
             fw.Show();
         }
-    
     }
 }
 
