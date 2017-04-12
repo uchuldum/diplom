@@ -59,5 +59,11 @@
                 
             </StackPanel>
         </StackPanel>
+        <StackPanel Name="editWR" Visibility="Visible" Orientation="Vertical">
+            <StackPanel Margin="10 10 0 0" Name="editMenu" Orientation="Horizontal">
+                <Button Width="150" Content="Добавление материла"></Button>
+                <Button Width="150" Content="Удаление материла" Margin="10 0 10 0"></Button>
+            </StackPanel>
+        </StackPanel>
     </Grid>
 </Window>

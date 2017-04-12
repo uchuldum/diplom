@@ -22,7 +22,7 @@ namespace pisateli_tuvy
     public partial class pass : Window
     {
         public static string path = System.AppDomain.CurrentDomain.BaseDirectory;
-        static string autor_id = "";//// ID автора для изменения 
+        static int uid = 0;//// ID автора для изменения 
         Connect con = new Connect();
         public pass()
         {
@@ -90,7 +90,6 @@ namespace pisateli_tuvy
                     for (int i = 0; i < count; ++i)
                     {
                         all_fio[i] = (all_fam[i]+all_imya[i]+all_otch[i]).Trim();
-                        autor_id = id[i];
                     }
                     foreach(string s in all_fio)
                     {
@@ -145,6 +144,8 @@ namespace pisateli_tuvy
                     stp.Width = 500;
                     stp.Height = 100;
                     stp.Orientation = Orientation.Horizontal;
+                    stp.Background = Brushes.LightBlue;
+                    stp.Margin = new Thickness (0,20,0,0);
                     Image img = new Image();
                     if(File.Exists(path+"all\\img\\"+all_img[i])) img.Source = con.GetImage(all_img[i]);
                     stp.Children.Add(img);
@@ -154,6 +155,22 @@ namespace pisateli_tuvy
                     stp.Children.Add(text);
                     stp.Tag = all_id[i];
                     writers.Children.Add(stp);
+                    stp.MouseEnter += (s, j) =>
+                    {
+                        Mouse.OverrideCursor = Cursors.Hand;
+                        stp.Background = Brushes.Aqua;
+                    };
+                    stp.MouseLeave += (s, j) =>
+                    {
+                        Mouse.OverrideCursor = Cursors.Arrow;
+                        stp.Background = Brushes.LightBlue;
+                    };
+                    stp.MouseUp += (s, j) =>
+                    {
+                        uid = Convert.ToInt32(stp.Tag);
+
+                        //MessageBox.Show(uid + "");
+                    };
                 }
             }
             catch(Exception ex)

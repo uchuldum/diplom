@@ -26,6 +26,20 @@ namespace pisateli_tuvy
                 }
             }
         }
+        public void ExecuteNonQueryPath(string query,string DBPath)
+        {
+
+            using (var connection = new SQLiteConnection("Data Source=" +DBPath))
+            {
+                using (var cmd = new SQLiteCommand(query, connection))
+                {
+                    cmd.CommandText = query;
+                    connection.Open();
+                    cmd.ExecuteNonQuery();
+                    connection.Close();
+                }
+            }
+        }
         public int ExecuteScalar(string query)
         {
             int Output = 0;
