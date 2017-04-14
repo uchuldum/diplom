@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-
+using System.Diagnostics;
 
 namespace pisateli_tuvy
 {
@@ -65,6 +65,7 @@ namespace pisateli_tuvy
             WindowState = WindowState.Maximized;
             InitializeComponent();
             writers("");
+            AUTORS.Visibility = Visibility.Visible;
         }
         private static BitmapImage GetImage(string imageUri)
         {
@@ -177,23 +178,8 @@ namespace pisateli_tuvy
                             {
                                 case MessageBoxResult.Yes:
                                     {
-                                        string path_nositel = ""; ////Путь КУДА БУДЕТ ЗАПИСАНА ПРОГРАММА
-                                        System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
-                                        System.Windows.Forms.DialogResult d_result = fbd.ShowDialog();
-                                        if (d_result == System.Windows.Forms.DialogResult.OK)
-                                        {
-                                            path_nositel = fbd.SelectedPath;
-                                        }
-                                      
-                                        
-                                        string trialdirectory = path + "TRIALDIRS\\" + RandomString(10);
-                                        if (!Directory.Exists(trialdirectory)) Directory.CreateDirectory(trialdirectory);
-                                        if (!Directory.Exists(trialdirectory + "\\pisateli")) Directory.CreateDirectory(trialdirectory + "\\pisateli");
-                                        string path_trial = PreparationCopy(trialdirectory);
-                                        RemoveDataBase(path_trial+"\\pisateli.db");
-                                        FolderCopy(path_trial,path_nositel,true);
-                                        FolderDelete(path_trial);
-                                        
+                                        AUTORS.Visibility = Visibility.Collapsed;
+                                        record.Visibility = Visibility.Visible;
                                     }
                                     break;
                                 case MessageBoxResult.No:
@@ -229,93 +215,58 @@ namespace pisateli_tuvy
             string fam = autor.Text.Trim();
             writers(fam);
         }
-      /*  private void stp_MouseEnter(object sender, System.EventArgs e)
-        {
-            StackPanel tvItem = (StackPanel)sender;
-            Mouse.OverrideCursor = Cursors.Hand;
-        }
-        private void stp_MouseLeave(object sender, System.EventArgs e)
-        {
-            StackPanel tvItem = (StackPanel)sender;
-            Mouse.OverrideCursor = Cursors.Arrow;
-        }
-        private void stp_MouseUp(object sender, System.EventArgs e)
-        {
-            StackPanel stp = (StackPanel)sender;
-            try
-            {
-                string path1 = "";
-                System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
-                System.Windows.Forms.DialogResult result = fbd.ShowDialog();
-                if (result == System.Windows.Forms.DialogResult.OK)
-                {
-                    path1 = fbd.SelectedPath;
-                }
-                
-                /// Folder "all"
-                ZipFile.CreateFromDirectory(path+"\\all",path1+"tuvawriters.zip");
-                ZipFile.ExtractToDirectory(path1 + "tuvawriters.zip", path1+"\\all");
-                if (File.Exists(path1 + "tuvawriters.zip")) File.Delete(path1 + "tuvawriters.zip");
-               
-
-                /////create folder "pisateli"
-                if (!Directory.Exists(path1 + "\\pisateli")) Directory.CreateDirectory(path1 + "\\pisateli");
-
-                ///Folder pisatalya
-                ///
-               
-                string pis_path = path1 + "\\pisateli\\" + pisatel + ".zip";
-                ZipFile.CreateFromDirectory(path + "\\pisateli\\"+pisatel, pis_path);
-                ZipFile.ExtractToDirectory(pis_path, path1+"\\pisateli\\"+pisatel);
-                if (File.Exists(pis_path)) File.Delete(pis_path);
-                ///////exe + accdb
-              
-                if(!File.Exists(path1 + "\\writers.accdb")) File.Copy(path + "\\writers.accdb", path1 + "\\writers.accdb");
-                if (!File.Exists(path1 + "\\pisateli_tuvy.exe")) File.Copy(path + "\\pisateli_tuvy.exe", path1 + "\\pisateli_tuvy.exe");
-                
-                string connection = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + path1 + "\\writers.accdb";
-                OleDbConnection conn = new OleDbConnection(connection);
-                try
-                {
-                    string[] str = new string[6];
-                     str[0] = "delete * from all_writers where ws_id <> " + stp.Tag;
-                     str[1] = "delete * from about_writer where ab_ws <> " + stp.Tag;
-                     str[2] = "delete * from books where b_wr <> " + stp.Tag;
-                     str[3] = "delete * from per_other where po_ws <> " + stp.Tag;
-                     str[4] = "delete * from per_tuv where pt_ws <> " + stp.Tag;
-                     str[5] = "delete * from stih_pes where sp_ws <> " + stp.Tag;
-                    OleDbCommand command = new OleDbCommand();
-                    command.Connection = conn;
-                    conn.Open();
-                    for(int i=0;i<6;++i)
-                    {
-                        command.CommandText = str[i];
-                        command.ExecuteNonQuery();
-                    }
-                }
-                catch(Exception ex)
-                {
-                    MessageBox.Show(ex + "");
-                }
-                finally
-                {
-                    conn.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex + "");
-            }
-            finally
-            {
-                MessageBox.Show("Скопировано");
-            }
-        }
-        */
         void CopyFile(string sourcefn, string destinfn)
         {
             FileInfo fn = new FileInfo(sourcefn);
             fn.CopyTo(destinfn, true);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            string trialdirectory = path + "TRIALDIRS\\" + RandomString(10);
+            if (!Directory.Exists(trialdirectory)) Directory.CreateDirectory(trialdirectory);
+            if (!Directory.Exists(trialdirectory + "\\pisateli")) Directory.CreateDirectory(trialdirectory + "\\pisateli");
+            string path_trial = PreparationCopy(trialdirectory);
+            RemoveDataBase(path_trial + "\\pisateli.db");
+            /////ЗАПИСЬ НА КОМПАКТ ДИСК
+            if (Disk.IsChecked == true)
+            {
+                string progr = path + "BurnAware\\DataDisc.exe",
+                           arg = "udf " + trialdirectory;
+                DriveInfo[] allDrives = DriveInfo.GetDrives();
+                foreach (DriveInfo d in allDrives)
+                    if (d.IsReady == true)
+                    {
+                        if (d.DriveType == DriveType.CDRom)
+                        {
+                            arg = arg + (d.Name).Substring(0, 1) + " -b";
+                        }
+                    }
+                /* if (File.Exists(progr)) Process.Start(progr, arg);
+                 else MessageBox.Show("NOFILE");*/
+                MessageBox.Show(progr+"  "+arg);
+            }
+            if (Flash.IsChecked == true)
+            {
+                ProgressManager pm = new ProgressManager();
+               
+                string path_nositel = ""; ////Путь КУДА БУДЕТ ЗАПИСАНА ПРОГРАММА
+                System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
+                System.Windows.Forms.DialogResult d_result = fbd.ShowDialog();
+                if (d_result == System.Windows.Forms.DialogResult.OK)
+                {
+                    path_nositel = fbd.SelectedPath;
+                }
+                pm.BeginWaiting();
+                pm.ChangeStatus("Loading...");
+                pm.SetProgressMaxValue(41);
+                for(int i = 0;i<41;i++) pm.ChangeProgress(i);
+                FolderCopy(path_trial, path_nositel, true);
+                FolderDelete(path_trial);
+                pm.EndWaiting();
+
+            }
+
         }
     }
 }

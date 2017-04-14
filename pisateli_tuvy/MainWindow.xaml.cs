@@ -945,6 +945,79 @@ namespace pisateli_tuvy
                                                                                                         ///////////ПОИСК ПИСАТЕЛЯ
         private void search_Click(object sender, RoutedEventArgs e)
         {
+            main_tuv.Visibility = Visibility.Collapsed;
+            stack_distr.Visibility = Visibility.Collapsed;
+            pisatel.Visibility = Visibility.Collapsed;
+            pis_tuv.Visibility = Visibility.Visible;
+
+            writers2.Children.Clear();
+            try
+            {
+                string distr_id = comboBox1.SelectedIndex.ToString().Trim();
+                if (distr_id == "-1") MessageBox.Show("as");
+                else
+                { 
+                    int count = con.ExecuteScalar("select count (*) from chogaalchy where chog_region_id = "+distr_id);
+                    if (count > 0)
+                    {
+                        string[] pis_id = con.Reader_Array("select chog_id from chogaalchy  where chog_region_id = " + distr_id + " order by chog_fam", count);
+                        string[] pis_surname = con.Reader_Array("select chog_fam from chogaalchy where chog_region_id = " + distr_id + " order by chog_fam", count);
+                        string[] pis_name = con.Reader_Array("select chog_imya from chogaalchy where chog_region_id = " + distr_id + " order by chog_fam", count);
+                        string[] pis_patronymic = con.Reader_Array("select chog_otch from chogaalchy where chog_region_id = " + distr_id + " order by chog_fam", count);
+                        string[] pis_img = con.Reader_Array("select chog_photo from chogaalchy where chog_region_id = " + distr_id + " order by chog_fam", count);
+                        for (int i = 0; i < count; ++i)
+                        {
+                            StackPanel stP2 = new StackPanel();
+                            Image img2 = new Image();
+                            TextBlock txtblk = new TextBlock();
+                            if (File.Exists("all\\img\\" + pis_img[i])) img2.Source = GetImage2("all\\img\\" + pis_img[i]);
+                            img2.HorizontalAlignment = HorizontalAlignment.Right;
+                            txtblk.Text = pis_surname[i] + " " + pis_name[i] + " " + pis_patronymic[i];
+                            txtblk.VerticalAlignment = VerticalAlignment.Center;
+                            txtblk.Margin = new Thickness(5, 0, 0, 0);
+                            txtblk.FontFamily = new FontFamily("Arial");
+                            txtblk.FontSize = 16;
+                            stP2.Orientation = Orientation.Horizontal;
+                            stP2.Background = Brushes.LightSteelBlue;
+                            stP2.MaxWidth = 1024;
+                            stP2.MinWidth = 800;
+                            stP2.Height = 100;
+                            stP2.Width = writers2.Width;
+                            stP2.Margin = new Thickness(0, 20, 0, 0);
+                            writers2.Children.Add(stP2);
+                            stP2.Children.Add(img2);
+                            stP2.Children.Add(txtblk);
+                            stP2.MouseEnter += new System.Windows.Input.MouseEventHandler(stP_MouseEnter);
+                            stP2.MouseLeave += new System.Windows.Input.MouseEventHandler(stP_MouseLeave);
+                            stP2.PreviewMouseUp += new System.Windows.Input.MouseButtonEventHandler(stP_MouseUp);
+                            stP2.Tag = pis_id[i];
+                        }
+                    }
+                    else
+                    {
+                        StackPanel stP2 = new StackPanel();
+                        TextBlock txtblk = new TextBlock();
+                        txtblk.VerticalAlignment = VerticalAlignment.Center;
+                        txtblk.Margin = new Thickness(5, 0, 0, 0);
+                        txtblk.FontFamily = new FontFamily("Arial");
+                        txtblk.FontSize = 16;
+                        txtblk.Text = "Кожуунга хамаарышкан чогаалчы амдыызында чок-тур. Удавас долдуртуна бээр.";
+                        stP2.Orientation = Orientation.Horizontal;
+                        stP2.Background = Brushes.LightSteelBlue;
+                        stP2.MaxWidth = 1024;
+                        stP2.MinWidth = 800;
+                        stP2.Height = 100;
+                        stP2.Width = writers2.Width;
+                        stP2.Margin = new Thickness(0, 20, 0, 0);
+                        writers2.Children.Add(stP2);
+                        stP2.Children.Add(txtblk);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
             
         }
 
@@ -1021,6 +1094,7 @@ namespace pisateli_tuvy
             filewrite fw = new filewrite();
             fw.Show();
         }
+      
     }
 }
 

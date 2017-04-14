@@ -81,6 +81,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helper.cs" />
+    <Compile Include="ProgressManager.cs" />
+    <Compile Include="ProgressWindow.xaml.cs">
+      <DependentUpon>ProgressWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RoundedCornersPolygon.cs" />
     <Page Include="filewrite.xaml">
       <SubType>Designer</SubType>
@@ -103,6 +108,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="pass.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ProgressWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

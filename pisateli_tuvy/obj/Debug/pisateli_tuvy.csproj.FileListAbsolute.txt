@@ -84,3 +84,6 @@ D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\pass.baml
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\pisateli_tuvy.g.resources
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\pisateli_tuvy.Properties.Resources.resources
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\pisateli_tuvy.csproj.GenerateResource.Cache
+D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\ProgressWindow.g.cs
+D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\ProgressWindow.baml
+D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\GeneratedInternalTypeHelper.g.cs
