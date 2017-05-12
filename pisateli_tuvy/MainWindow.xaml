@@ -56,7 +56,8 @@
                     <Label Content="Чогаалчылар" Height="31" HorizontalAlignment="Left" x:Name="label1" VerticalAlignment="Top" Width="145" FontFamily="Arial" FontWeight="Bold" FontSize="18" />
                     <StackPanel x:Name="poisk" Height="auto" Orientation="Horizontal">
                         <!--<TextBox  Height="27" HorizontalAlignment="Left"   x:Name="textBox2" VerticalAlignment="Top" Width="630" Margin="20" Background="Transparent" FontFamily="Arial" Text="Введите имя писателя для поиска" />-->
-                        <TextBlock Margin="5,2" Text="Last Name ..." Foreground="LightGray" >
+                        <Grid Grid.Row="2">
+                            <TextBlock FontFamily="Arial" Margin="5,23" FontSize="18" Text="Введите фамилию автора" Foreground="LightGray" >
                             <TextBlock.Visibility>
                                 <MultiBinding Converter="{StaticResource Helper}">
                                     <Binding ElementName="txtLastName" Path="Text.IsEmpty" />
@@ -64,7 +65,8 @@
                                 </MultiBinding>
                             </TextBlock.Visibility>
                         </TextBlock>
-                        <TextBox Name="txtLastName" Background="Transparent" Width="140" MaxLength="50" />
+                        <TextBox  FontSize="18" FontFamily="Arial" Name="txtLastName" Background="Transparent" Width="740" MaxLength="50" Height="30"  PreviewKeyUp="txtLastName_PreviewKeyUp"  />
+                        </Grid>
                         <ComboBox Margin="20" IsEditable="True" IsReadOnly="True" Text="Кожуун" Height="27" HorizontalAlignment="Left" x:Name="comboBox1" VerticalAlignment="Top" Width="127" FontFamily="Arial">
                             <ComboBoxItem Content="Кожуун" x:Name="distr0" />
                             <ComboBoxItem Content="Тожу кожуун" x:Name="distr1" />

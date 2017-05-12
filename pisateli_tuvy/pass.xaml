@@ -6,64 +6,114 @@
         xmlns:local="clr-namespace:pisateli_tuvy"
         mc:Ignorable="d"
         Title="pass" Height="432.558" Width="497.342">
-    <Grid>
-        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Visibility="Collapsed" Name="Password">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock>Введите логин</TextBlock>
-                <TextBox Name="login"  Width="100" Margin="18,0,0,10" ></TextBox>
+    <ScrollViewer>
+        <StackPanel VerticalAlignment="Top">
+            <Button Name="Back" Visibility="Collapsed" Click="Button_Click_4" Margin="0 5 0 0" Width="30" HorizontalAlignment="Left" Height="20" Content="Back">
+            </Button>
+            <StackPanel Margin="0 150 0 0" Orientation="Vertical" VerticalAlignment="Center" Visibility="Collapsed" Name="Password">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock>Введите логин</TextBlock>
+                    <TextBox Name="login"  Width="100" Margin="18,0,0,10" ></TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock>Введите пароль</TextBlock>
+                    <PasswordBox Name="password" Width="100" Margin="10,0,0,10" Password=""></PasswordBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Height="20" HorizontalAlignment="Center">
+                    <Button Content="Вход" Margin="0,0,10,0" Name="ok" Width="50" Click="ok_Click">
+                    </Button>
+                    <Button Content="Выход" Name="no" Width="50" Click="no_Click" >
+                    </Button>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock>Введите пароль</TextBlock>
-                <PasswordBox Name="password" Width="100" Margin="10,0,0,10" Password=""></PasswordBox>
+            <StackPanel Name="adminPanel" Visibility="Collapsed">
+                <StackPanel Name="Menu" Orientation="Horizontal" Margin="20 20 0 0">
+                    <Border BorderBrush="Gray" BorderThickness="1">
+                        <StackPanel Name="Add" PreviewMouseUp="Add_PreviewMouseUp" >
+                            <TextBlock FontSize="14" Text="Добавить писателя"/>
+                        </StackPanel>
+                    </Border>
+                    <Border BorderBrush="Gray" BorderThickness="1" Margin="50 0 50 0">
+                        <StackPanel Name="Change" PreviewMouseUp="Change_PreviewMouseUp">
+                            <TextBlock FontSize="14" Text="Изменить писателя"/>
+                        </StackPanel>
+                    </Border>
+                    <Border BorderBrush="Gray" BorderThickness="1">
+                        <StackPanel Name="Delete" PreviewMouseUp="Delete_PreviewMouseUp">
+                            <TextBlock FontSize="14" Text="Удалить писателя"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Height="20" HorizontalAlignment="Center">
-                <Button Content="Вход" Margin="0,0,10,0" Name="ok" Width="50" Click="ok_Click">
-                </Button>
-                <Button Content="Выход" Name="no" Width="50" Click="no_Click" >
-                </Button>
+            <StackPanel Margin="20 20 0 0" Name="addWR" Orientation="Vertical" Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal" Name="FIO">
+                    <TextBox Width="100" Name="Surname" Text="Фамилия"></TextBox>
+                    <TextBox Width="100" Name="Name" Text="Имя" Margin="30 0 30 0"></TextBox>
+                    <TextBox Width="100" Name="Patronymic" Text="Отчество"></TextBox>
+                </StackPanel>
+                <Button Width="100" Content="Добавить" Margin="0 5 0 0" HorizontalAlignment="Left" Click="Button_Click"></Button>
             </StackPanel>
-        </StackPanel>
-        <StackPanel Name="adminPanel" Visibility="Collapsed">
-            <StackPanel Name="Menu" Orientation="Horizontal" Margin="20 20 0 0">
-                <Border BorderBrush="Gray" BorderThickness="1">
-                    <StackPanel Name="Add" PreviewMouseUp="Add_PreviewMouseUp" >
-                        <TextBlock FontSize="14" Text="Добавить писателя"/>
-                    </StackPanel>
-                </Border>
-                <Border BorderBrush="Gray" BorderThickness="1" Margin="50 0 50 0">
-                    <StackPanel Name="Change" PreviewMouseUp="Change_PreviewMouseUp">
-                        <TextBlock FontSize="14" Text="Изменить писателя"/>
-                    </StackPanel>
-                </Border>
-                <Border BorderBrush="Gray" BorderThickness="1">
-                    <StackPanel Name="Delete" PreviewMouseUp="Delete_PreviewMouseUp">
-                        <TextBlock FontSize="14" Text="Удалить писателя"/>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
-        </StackPanel>
-        <StackPanel Margin="20 20 0 0" Name="addWR" Orientation="Vertical" Visibility="Collapsed">
-            <StackPanel Orientation="Horizontal" Name="FIO">
-                <TextBox Width="100" Name="Surname" Text="Фамилия"></TextBox>
-                <TextBox Width="100" Name="Name" Text="Имя" Margin="30 0 30 0"></TextBox>
-                <TextBox Width="100" Name="Patronymic" Text="Отчество"></TextBox>
-            </StackPanel>
-            <Button Width="100" Content="Добавить" Margin="0 5 0 0" HorizontalAlignment="Left" Click="Button_Click"></Button>
-        </StackPanel>
-        <StackPanel  Margin="20 20 0 0" Name="searchWR" Orientation="Vertical" Visibility="Collapsed">
-            <StackPanel Orientation="Horizontal">
-                <TextBox Name="Familiya" Width="100"></TextBox>
-                <Button Name="Search" Content="Найти" Margin="20 0 0 0" Click="Search_Click"></Button>
-            </StackPanel>
-            <StackPanel Name="writers" HorizontalAlignment="Left">
+            <StackPanel  Margin="20 20 0 0" Name="searchWR" Orientation="Vertical" Visibility="Collapsed">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox Name="Familiya" Width="100"></TextBox>
+                    <Button Name="Search" Content="Найти" Margin="20 0 0 0" Click="Search_Click"></Button>
+                </StackPanel>
+                <StackPanel Name="writers" HorizontalAlignment="Left">
                 
+                </StackPanel>
             </StackPanel>
+            <StackPanel Name="editWR" Visibility="Collapsed" Orientation="Vertical">
+                <StackPanel Margin="10 10 0 0" Name="editMenu" Orientation="Horizontal">
+                    <Button Click="Button_Click_1" Width="150" Content="Добавление материла"></Button>
+                    <Button Click="Button_Click_2" Width="150" Content="Удаление материла" Margin="10 0 10 0"></Button>
+                </StackPanel>
+                <StackPanel Name="DeleteMater" HorizontalAlignment="Left" Visibility="Collapsed">
+                    <TextBlock Name="MaterText" Text=""></TextBlock>
+                    <TreeView BorderThickness="0" Name="MaterTV">
+                        <TreeViewItem Tag="1" Header="Биография писателя">
+                        </TreeViewItem>
+                        <TreeViewItem Tag="2" Header="Писательская работа">
+                        </TreeViewItem>
+                        <TreeViewItem Tag="3" Header="Выпущенные книги">
+                            <StackPanel Name="Books" Orientation="Vertical">
+                                <StackPanel Orientation="Horizontal">
+                                    <Label>Введите название книги</Label>
+                                    <TextBox Name="Book_Name" Margin="5 0 0 0" Width="250"></TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                    <Label>Введите жанр книги</Label>
+                                    <TextBox Name="Book_Janr" Margin="27 0 0 0" Width="250"></TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                    <Label>Введите год выпуска</Label>
+                                    <TextBox Name="Book_Year" Margin="24 0 0 0" Width="250"></TextBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                    <Label>Введите типографию</Label>
+                                    <TextBox Name="Book_Tipogr" Margin="22 0 0 0" Width="250"></TextBox>
+                                </StackPanel>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                <Label>Введите кол-во страниц</Label>
+                                <TextBox Name="Book_Pages" Margin="5 0 0 0" Width="250"></TextBox>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                <Button Click="Button_Click_3" Width="100" Height="20" Margin="100 0 0 0" Content="Добавить">
+                                
+                                </Button>
+                            </StackPanel>
+                        </TreeViewItem>
+                        <TreeViewItem Tag="4" Header="Работы о писателе">
+                        </TreeViewItem>
+                        <TreeViewItem Tag="5" Header="Перевод произведений писателя на другие языки">
+                        </TreeViewItem>
+                        <TreeViewItem Tag="6" Header="Переводы произведений на тувинский язык">
+                        </TreeViewItem>
+                        <TreeViewItem Tag="7" Header="Стихотворения ставшие песнями">
+                        </TreeViewItem>
+                    </TreeView>
+                </StackPanel>
+             </StackPanel>
         </StackPanel>
-        <StackPanel Name="editWR" Visibility="Visible" Orientation="Vertical">
-            <StackPanel Margin="10 10 0 0" Name="editMenu" Orientation="Horizontal">
-                <Button Width="150" Content="Добавление материла"></Button>
-                <Button Width="150" Content="Удаление материла" Margin="10 0 10 0"></Button>
-            </StackPanel>
-        </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </Window>
