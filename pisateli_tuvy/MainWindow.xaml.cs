@@ -269,6 +269,7 @@ namespace pisateli_tuvy
         {
             webbrowser.Visibility = Visibility.Collapsed;
             TVMenu.Items.Clear();
+            TVMenu2.Items.Clear();
             noname.Children.Clear();
             noname.Visibility = Visibility.Visible;
             try
@@ -307,7 +308,7 @@ namespace pisateli_tuvy
                     {
                         int localid = Convert.ToInt32(item.Tag);
                         string localtext = con.Reader("select chdugazh_text from chog_dug_azhyldar where chdugazh_id = "+localid);
-                        string localpath = path + "pisateli\\" + autor_folder + "\\chog_dug_azhyldary\\" + localtext + ".pdf";
+                        string localpath = path + "pisateli\\" + autor_folder + "\\chog_dug_azhyldary\\" + localtext;
                         if (File.Exists(localpath))
                         {
                             noname.Visibility = Visibility.Collapsed;
@@ -342,7 +343,7 @@ namespace pisateli_tuvy
                     {
                         int localid = Convert.ToInt32(item.Tag);
                         string localtext = con.Reader("select chdugazh_text from chog_dug_azhyldar where chdugazh_id = " + localid);
-                        string localpath = path + "pisateli\\" + autor_folder + "\\chog_dug_azhyldary\\" + localtext + ".pdf";
+                        string localpath = path + "pisateli\\" + autor_folder + "\\chog_dug_azhyldary\\" + localtext;
                         if (File.Exists(localpath))
                         {
                             noname.Visibility = Visibility.Collapsed;
@@ -397,7 +398,7 @@ namespace pisateli_tuvy
                     {
                         int localid = Convert.ToInt32(item.Tag);
                         string localtext = con.Reader("select ochulgalary_text from ochulgalary where ochulgalary_id = " + localid);
-                        string localpath = path + "pisateli\\" + autor_folder + "\\perevod_other\\" + localtext + ".pdf";
+                        string localpath = path + "pisateli\\" + autor_folder + "\\perevod\\" + localtext + ".pdf";
                         if (File.Exists(localpath))
                         {
                             noname.Visibility = Visibility.Collapsed;
@@ -455,7 +456,7 @@ namespace pisateli_tuvy
                     {
                         int localid = Convert.ToInt32(item.Tag);
                         string localtext = con.Reader("select ochulgalary_text from ochulgalary where ochulgalary_id = " + localid);
-                        string localpath = path + "pisateli\\" + autor_folder + "\\perevod_tuv\\" + localtext + ".pdf";
+                        string localpath = path + "pisateli\\" + autor_folder + "\\perevod\\" + localtext + ".pdf";
                         if (File.Exists(localpath))
                         {
                             noname.Visibility = Visibility.Collapsed;
@@ -585,6 +586,7 @@ namespace pisateli_tuvy
                     string a = con.Reader("select coords from region where region_id = " + (i + 1).ToString());
                     map_pol.Tag = con.Reader("select r_name from region where region_id = " + (i + 1).ToString());
                     string centr = con.Reader("select r_links from region where region_id = " + (i + 1).ToString());
+                    string capital = con.Reader("select area_name from region where region_id = " + (i + 1).ToString());
                     //map_pol.Name = ;
                     string[] split = a.Split(new Char[] { ',' });
                     string[] centr_arr = centr.Split(new Char[] { ',' });
@@ -598,12 +600,52 @@ namespace pisateli_tuvy
                     el.StrokeThickness = 2;
                     el.Stroke = Brushes.Black;
                     el.Fill = Brushes.White;
-                    if (centr_X == 547 || centr_X == 514 || centr_X == 397 || centr_X == 270 || centr_X == 172)
+                    el.Tag = capital;
+                    if (centr_X == 547 || centr_X == 514 || centr_X == 397 || centr_X == 270)
                     {
                         el.Width = 15;
                         el.Height = 15;
                         el.StrokeThickness = 3;
                     }
+                    el.MouseEnter += (s, j) =>
+                    {
+                        Mouse.OverrideCursor = Cursors.Hand;
+                        map_pol.Fill = Brushes.Yellow;
+                        Point position = Mouse.GetPosition(Map);
+                        TextBlock text = new TextBlock();
+                        text.Text = el.Tag.ToString();
+                        text.FontFamily = new FontFamily("Comic Sans MS");
+                        text.Foreground = Brushes.Yellow;
+                        text.Name = "text_d";
+                        int length = text.Text.Length;
+                        Canvas.SetLeft(text, (position.X + 22));
+                        Canvas.SetTop(text, (position.Y + 25));
+                        Rectangle rect = new Rectangle();
+                        rect.StrokeThickness = 1;
+                        rect.Stroke = Brushes.Black;
+                        rect.Fill = Brushes.Black;
+                        rect.RadiusX = 5;
+                        rect.RadiusY = 5;
+                        rect.Name = "distr";
+                        rect.Width = length * 8;
+                        rect.Height = 30;
+                        Canvas.SetLeft(rect, (position.X + 20));
+                        Canvas.SetTop(rect, (position.Y + 20));
+                        var rectangle = (UIElement)LogicalTreeHelper.FindLogicalNode(Map, "distr"); ////ОЧИСТКА ПРЕДЫДУЩЕГО
+                        var text_dist = (UIElement)LogicalTreeHelper.FindLogicalNode(Map, "text_d");
+                        Map.Children.Remove(rectangle);
+                        Map.Children.Remove(text_dist);
+                        Map.Children.Add(rect);
+                        Map.Children.Add(text);
+                    };
+                    el.MouseLeave += (s, j) =>
+                    {
+                        Mouse.OverrideCursor = Cursors.Arrow;
+                    };
+                    el.PreviewMouseUp += (s, j) =>
+                    {
+                        item_mouseUp(map_pol, j);
+                    };
                     int k = split.Length;
                     for (int j = 0; j < k - 1; j = j + 2)
                     {
@@ -620,6 +662,7 @@ namespace pisateli_tuvy
                     map_pol.MouseMove += new MouseEventHandler(item_MouseMove);
                     map_pol.MouseLeave += new MouseEventHandler(item_MouseLeave);
                     map_pol.PreviewMouseUp += new MouseButtonEventHandler(item_mouseUp);
+                    
                 }
             }
             catch (Exception ex)
@@ -704,35 +747,74 @@ namespace pisateli_tuvy
                  if(count!=0)
                  for (int i = 0; i < count; ++i)
                  {
-                     StackPanel stP = new StackPanel();
-                     string[] pis_surname = con.Reader_Array("select chog_fam from chogaalchy where chog_region_id=" + region_id, count);
-                     string[] pis_name = con.Reader_Array("select chog_imya from chogaalchy where chog_region_id=" + region_id, count);
-                     string[] pis_patronymic = con.Reader_Array("select chog_otch from chogaalchy where chog_region_id=" + region_id, count);
-                     string[] pis_img =con.Reader_Array("select chog_photo from chogaalchy where chog_region_id=" + region_id, count);
-                     string[] pis_id = con.Reader_Array("select chog_id from chogaalchy where chog_region_id=" + region_id, count);
+                         string[] pis_surname = con.Reader_Array("select chog_fam from chogaalchy where chog_region_id=" + region_id, count);
+                         string[] pis_name = con.Reader_Array("select chog_imya from chogaalchy where chog_region_id=" + region_id, count);
+                         string[] pis_patronymic = con.Reader_Array("select chog_otch from chogaalchy where chog_region_id=" + region_id, count);
+                         string[] pis_img =con.Reader_Array("select chog_photo from chogaalchy where chog_region_id=" + region_id, count);
+                         string[] pis_id = con.Reader_Array("select chog_id from chogaalchy where chog_region_id=" + region_id, count);
+                         string[] pis_folder = con.Reader_Array("select folder from chogaalchy where chog_region_id=" + region_id, count);
+                        StackPanel stP = new StackPanel();
+                        ImageBrush img = new ImageBrush();
+                        TextBlock txtblk = new TextBlock();
 
-                     Image img = new Image();
-                     TextBlock txtB = new TextBlock();
-                     if(File.Exists(path+ "\\all\\img\\" + pis_img[i])) img.Source = GetImage2("\\all\\img\\" + pis_img[i]);
-                     txtB.Text = pis_surname[i]+" "+ pis_name[i] + " " + pis_patronymic[i];
-                     txtB.VerticalAlignment = VerticalAlignment.Center;  
-                     txtB.Margin = new Thickness(5, 0, 0, 0);
-                     stP.Orientation = Orientation.Horizontal;
-                     stP.Background = Brushes.LightSteelBlue;
-                     txtB.FontFamily = new FontFamily("Arial");
-                     txtB.FontSize = 16;
-                     stP.MaxWidth = 1024;
-                     stP.MinWidth = 800;
-                     stP.Height = 100;
-                     stP.Width = writers.Width;
-                     stP.Margin = new Thickness(0, 20, 0, 0);
-                     writers.Children.Add(stP);
-                     stP.Children.Add(img);
-                     stP.Children.Add(txtB);
-                     stP.MouseEnter += new System.Windows.Input.MouseEventHandler(stP_MouseEnter);
-                     stP.MouseLeave += new System.Windows.Input.MouseEventHandler(stP_MouseLeave);
-                     stP.PreviewMouseUp += new System.Windows.Input.MouseButtonEventHandler(stP_MouseUp);
-                     stP.Tag = pis_id[i];
+                        Border b1 = new Border();
+                        // b1.BorderBrush = Brushes.LightSteelBlue;
+                        b1.Background = Brushes.LightSteelBlue;
+                        b1.BorderThickness = new Thickness(1);
+                        b1.CornerRadius = new CornerRadius(15);
+                        b1.MaxWidth = 1024;
+                        b1.MinWidth = 800;
+                        b1.Height = 100;
+                        b1.Margin = new Thickness(0, 20, 0, 0);
+
+
+
+                        Border b = new Border();
+                        b.BorderBrush = Brushes.White;
+                        b.BorderThickness = new Thickness(1);
+                        b.CornerRadius = new CornerRadius(15);
+                        b.Width = 100;
+                        b.Height = 100;
+
+
+                        if (File.Exists(path + "pisateli\\" + pis_folder[i] + "\\" + pis_img[i]))
+                            img.ImageSource = con.GetImage2(path + "pisateli\\" + pis_folder[i] + "\\" + pis_img[i]);
+                        else img.ImageSource = con.GetImage2(path + "\\all\\img\\default.png");
+
+                        b.Background = img;
+                        b.HorizontalAlignment = HorizontalAlignment.Right;
+
+
+                        txtblk.Text = pis_surname[i] + " " + pis_name[i] + " " + pis_patronymic[i];
+                        txtblk.VerticalAlignment = VerticalAlignment.Center;
+                        txtblk.Margin = new Thickness(5, 0, 0, 0);
+                        txtblk.FontFamily = new FontFamily("Arial");
+                        txtblk.FontSize = 16;
+
+                        stP.Orientation = Orientation.Horizontal;
+
+
+
+                        stP.Children.Add(b);
+                        stP.Children.Add(txtblk);
+                        b1.Child = stP;
+                        writers.Children.Add(b1);
+
+
+                        b1.MouseEnter += (s, j) =>
+                        {
+                            txtblk.FontStyle = FontStyles.Oblique;
+                            b1.Background = Brushes.LightBlue;
+                            Mouse.OverrideCursor = Cursors.Hand;
+                        };
+                        b1.MouseLeave += (s, j) =>
+                        {
+                            Mouse.OverrideCursor = Cursors.Arrow;
+                            txtblk.FontStyle = FontStyles.Normal;
+                            b1.Background = Brushes.LightSteelBlue;
+                        };
+                        stP.PreviewMouseUp += new System.Windows.Input.MouseButtonEventHandler(stP_MouseUp);
+                        stP.Tag = pis_id[i];
                  }
                  else
                  {
@@ -894,34 +976,72 @@ namespace pisateli_tuvy
                 string[] pis_name = con.Reader_Array("select chog_imya from chogaalchy order by chog_fam", count);
                 string[] pis_patronymic = con.Reader_Array("select chog_otch from chogaalchy order by chog_fam", count);
                 string[] pis_img = con.Reader_Array("select chog_photo from chogaalchy order by chog_fam", count);
-
+                string[] pis_folder = con.Reader_Array("select folder from chogaalchy order by chog_fam", count);
                 for (int i = 0; i < count; ++i)
                 {
                     
-                    StackPanel stP2 = new StackPanel();
-                    Image img2 = new Image();
+                    StackPanel stP = new StackPanel();
+                    ImageBrush img = new ImageBrush();
                     TextBlock txtblk = new TextBlock();
-                    if(File.Exists("all\\img\\"+pis_img[i]))  img2.Source = GetImage2("all\\img\\"+pis_img[i]);
-                    img2.HorizontalAlignment = HorizontalAlignment.Right;
+
+                    Border b1 = new Border();
+                   // b1.BorderBrush = Brushes.LightSteelBlue;
+                    b1.Background = Brushes.LightSteelBlue;
+                    b1.BorderThickness = new Thickness(1);
+                    b1.CornerRadius = new CornerRadius(15);
+                    b1.MaxWidth = 1024;
+                    b1.MinWidth = 800;
+                    b1.Height = 100;
+                    b1.Margin = new Thickness(0, 20, 0, 0);
+                    
+
+
+                    Border b = new Border();
+                    b.BorderBrush = Brushes.White;
+                    b.BorderThickness = new Thickness(1);
+                    b.CornerRadius = new CornerRadius(15);
+                    b.Width = 100;
+                    b.Height = 100;
+
+
+                    if (File.Exists(path + "pisateli\\" + pis_folder[i] + "\\" + pis_img[i]))
+                        img.ImageSource = con.GetImage2(path + "pisateli\\" + pis_folder[i] + "\\" + pis_img[i]);
+                    else img.ImageSource = con.GetImage2(path + "\\all\\img\\default.png");
+
+                    b.Background = img;
+                    b.HorizontalAlignment = HorizontalAlignment.Right;
+
+
                     txtblk.Text = pis_surname[i]+" "+pis_name[i]+" "+pis_patronymic[i];
                     txtblk.VerticalAlignment = VerticalAlignment.Center;
                     txtblk.Margin = new Thickness(5, 0, 0, 0);
                     txtblk.FontFamily = new FontFamily("Arial");
                     txtblk.FontSize = 16;
-                    stP2.Orientation = Orientation.Horizontal;
-                    stP2.Background = Brushes.LightSteelBlue;
-                    stP2.MaxWidth = 1024;
-                    stP2.MinWidth = 800;
-                    stP2.Height = 100;
-                    stP2.Width = writers2.Width;
-                    stP2.Margin = new Thickness(0, 20, 0, 0);
-                    writers2.Children.Add(stP2);
-                    stP2.Children.Add(img2);
-                    stP2.Children.Add(txtblk);
-                    stP2.MouseEnter += new System.Windows.Input.MouseEventHandler(stP_MouseEnter);
-                    stP2.MouseLeave += new System.Windows.Input.MouseEventHandler(stP_MouseLeave);
-                    stP2.PreviewMouseUp += new System.Windows.Input.MouseButtonEventHandler(stP_MouseUp);
-                    stP2.Tag = pis_id[i];
+
+                    stP.Orientation = Orientation.Horizontal;
+                    
+
+                   
+                    stP.Children.Add(b);
+                    stP.Children.Add(txtblk);
+                    b1.Child = stP;
+                    writers2.Children.Add(b1);
+                   
+                   
+                    b1.MouseEnter += (s,j) =>
+                    {
+                        txtblk.FontStyle = FontStyles.Oblique;
+                        b1.Background = Brushes.LightBlue;
+                        Mouse.OverrideCursor = Cursors.Hand;
+                    };
+                    b1.MouseLeave += (s, j) =>
+                    {
+                        Mouse.OverrideCursor = Cursors.Arrow;
+                        txtblk.FontStyle = FontStyles.Normal;
+                        b1.Background = Brushes.LightSteelBlue;
+                    };
+                    stP.PreviewMouseUp += new System.Windows.Input.MouseButtonEventHandler(stP_MouseUp);
+                    stP.Tag = pis_id[i];
                 }
             }
             catch (Exception ex)
@@ -965,32 +1085,71 @@ namespace pisateli_tuvy
                         string[] pis_name = con.Reader_Array("select chog_imya from chogaalchy where chog_region_id = " + distr_id + " order by chog_fam", count);
                         string[] pis_patronymic = con.Reader_Array("select chog_otch from chogaalchy where chog_region_id = " + distr_id + " order by chog_fam", count);
                         string[] pis_img = con.Reader_Array("select chog_photo from chogaalchy where chog_region_id = " + distr_id + " order by chog_fam", count);
+                        string[] pis_folder = con.Reader_Array("select folder from chogaalchy where chog_region_id = " + distr_id + " order by chog_fam", count);
                         for (int i = 0; i < count; ++i)
                         {
-                            StackPanel stP2 = new StackPanel();
-                            Image img2 = new Image();
+                            StackPanel stP = new StackPanel();
+                            ImageBrush img = new ImageBrush();
                             TextBlock txtblk = new TextBlock();
-                            if (File.Exists("all\\img\\" + pis_img[i])) img2.Source = GetImage2("all\\img\\" + pis_img[i]);
-                            img2.HorizontalAlignment = HorizontalAlignment.Right;
+
+                            Border b1 = new Border();
+                            // b1.BorderBrush = Brushes.LightSteelBlue;
+                            b1.Background = Brushes.LightSteelBlue;
+                            b1.BorderThickness = new Thickness(1);
+                            b1.CornerRadius = new CornerRadius(15);
+                            b1.MaxWidth = 1024;
+                            b1.MinWidth = 800;
+                            b1.Height = 100;
+                            b1.Margin = new Thickness(0, 20, 0, 0);
+
+
+
+                            Border b = new Border();
+                            b.BorderBrush = Brushes.White;
+                            b.BorderThickness = new Thickness(1);
+                            b.CornerRadius = new CornerRadius(15);
+                            b.Width = 100;
+                            b.Height = 100;
+
+
+                            if (File.Exists(path + "pisateli\\" + pis_folder[i] + "\\" + pis_img[i]))
+                                img.ImageSource = con.GetImage2(path + "pisateli\\" + pis_folder[i] + "\\" + pis_img[i]);
+                            else img.ImageSource = con.GetImage2(path + "\\all\\img\\default.png");
+
+                            b.Background = img;
+                            b.HorizontalAlignment = HorizontalAlignment.Right;
+
+
                             txtblk.Text = pis_surname[i] + " " + pis_name[i] + " " + pis_patronymic[i];
                             txtblk.VerticalAlignment = VerticalAlignment.Center;
                             txtblk.Margin = new Thickness(5, 0, 0, 0);
                             txtblk.FontFamily = new FontFamily("Arial");
                             txtblk.FontSize = 16;
-                            stP2.Orientation = Orientation.Horizontal;
-                            stP2.Background = Brushes.LightSteelBlue;
-                            stP2.MaxWidth = 1024;
-                            stP2.MinWidth = 800;
-                            stP2.Height = 100;
-                            stP2.Width = writers2.Width;
-                            stP2.Margin = new Thickness(0, 20, 0, 0);
-                            writers2.Children.Add(stP2);
-                            stP2.Children.Add(img2);
-                            stP2.Children.Add(txtblk);
-                            stP2.MouseEnter += new System.Windows.Input.MouseEventHandler(stP_MouseEnter);
-                            stP2.MouseLeave += new System.Windows.Input.MouseEventHandler(stP_MouseLeave);
-                            stP2.PreviewMouseUp += new System.Windows.Input.MouseButtonEventHandler(stP_MouseUp);
-                            stP2.Tag = pis_id[i];
+
+                            stP.Orientation = Orientation.Horizontal;
+
+
+
+                            stP.Children.Add(b);
+                            stP.Children.Add(txtblk);
+                            b1.Child = stP;
+                            writers2.Children.Add(b1);
+
+
+                            b1.MouseEnter += (s, j) =>
+                            {
+                                txtblk.FontStyle = FontStyles.Oblique;
+                                b1.Background = Brushes.LightBlue;
+                                Mouse.OverrideCursor = Cursors.Hand;
+                            };
+                            b1.MouseLeave += (s, j) =>
+                            {
+                                Mouse.OverrideCursor = Cursors.Arrow;
+                                txtblk.FontStyle = FontStyles.Normal;
+                                b1.Background = Brushes.LightSteelBlue;
+                            };
+                            stP.PreviewMouseUp += new System.Windows.Input.MouseButtonEventHandler(stP_MouseUp);
+                            stP.Tag = pis_id[i];
                         }
                     }
                     else
@@ -1115,34 +1274,72 @@ namespace pisateli_tuvy
                 string[] pis_name = con.Reader_Array("select chog_imya from chogaalchy  where chog_fam like '" + familiya + "%'" + " order by chog_fam", count);
                 string[] pis_patronymic = con.Reader_Array("select chog_otch from chogaalchy  where chog_fam like '" + familiya + "%'" + " order by chog_fam", count);
                 string[] pis_img = con.Reader_Array("select chog_photo from chogaalchy  where chog_fam like '" + familiya + "%'" + " order by chog_fam", count);
-
+                string[] pis_folder = con.Reader_Array("select folder from chogaalchy  where chog_fam like '" + familiya + "%'" + " order by chog_fam", count);
                 for (int i = 0; i < count; ++i)
                 {
 
-                    StackPanel stP2 = new StackPanel();
-                    Image img2 = new Image();
+                    StackPanel stP = new StackPanel();
+                    ImageBrush img = new ImageBrush();
                     TextBlock txtblk = new TextBlock();
-                    if (File.Exists("all\\img\\" + pis_img[i])) img2.Source = GetImage2("all\\img\\" + pis_img[i]);
-                    img2.HorizontalAlignment = HorizontalAlignment.Right;
+
+                    Border b1 = new Border();
+                    // b1.BorderBrush = Brushes.LightSteelBlue;
+                    b1.Background = Brushes.LightSteelBlue;
+                    b1.BorderThickness = new Thickness(1);
+                    b1.CornerRadius = new CornerRadius(15);
+                    b1.MaxWidth = 1024;
+                    b1.MinWidth = 800;
+                    b1.Height = 100;
+                    b1.Margin = new Thickness(0, 20, 0, 0);
+
+
+
+                    Border b = new Border();
+                    b.BorderBrush = Brushes.White;
+                    b.BorderThickness = new Thickness(1);
+                    b.CornerRadius = new CornerRadius(15);
+                    b.Width = 100;
+                    b.Height = 100;
+
+
+                    if (File.Exists(path + "pisateli\\" + pis_folder[i] + "\\" + pis_img[i]))
+                        img.ImageSource = con.GetImage2(path + "pisateli\\" + pis_folder[i] + "\\" + pis_img[i]);
+                    else img.ImageSource =con.GetImage2(path + "\\all\\img\\default.png");
+
+                    b.Background = img;
+                    b.HorizontalAlignment = HorizontalAlignment.Right;
+
+
                     txtblk.Text = pis_surname[i] + " " + pis_name[i] + " " + pis_patronymic[i];
                     txtblk.VerticalAlignment = VerticalAlignment.Center;
                     txtblk.Margin = new Thickness(5, 0, 0, 0);
                     txtblk.FontFamily = new FontFamily("Arial");
                     txtblk.FontSize = 16;
-                    stP2.Orientation = Orientation.Horizontal;
-                    stP2.Background = Brushes.LightSteelBlue;
-                    stP2.MaxWidth = 1024;
-                    stP2.MinWidth = 800;
-                    stP2.Height = 100;
-                    stP2.Width = writers2.Width;
-                    stP2.Margin = new Thickness(0, 20, 0, 0);
-                    writers2.Children.Add(stP2);
-                    stP2.Children.Add(img2);
-                    stP2.Children.Add(txtblk);
-                    stP2.MouseEnter += new System.Windows.Input.MouseEventHandler(stP_MouseEnter);
-                    stP2.MouseLeave += new System.Windows.Input.MouseEventHandler(stP_MouseLeave);
-                    stP2.PreviewMouseUp += new System.Windows.Input.MouseButtonEventHandler(stP_MouseUp);
-                    stP2.Tag = pis_id[i];
+
+                    stP.Orientation = Orientation.Horizontal;
+
+
+
+                    stP.Children.Add(b);
+                    stP.Children.Add(txtblk);
+                    b1.Child = stP;
+                    writers2.Children.Add(b1);
+
+
+                    b1.MouseEnter += (s, j) =>
+                    {
+                        txtblk.FontStyle = FontStyles.Oblique;
+                        b1.Background = Brushes.LightBlue;
+                        Mouse.OverrideCursor = Cursors.Hand;
+                    };
+                    b1.MouseLeave += (s, j) =>
+                    {
+                        Mouse.OverrideCursor = Cursors.Arrow;
+                        txtblk.FontStyle = FontStyles.Normal;
+                        b1.Background = Brushes.LightSteelBlue;
+                    };
+                    stP.PreviewMouseUp += new System.Windows.Input.MouseButtonEventHandler(stP_MouseUp);
+                    stP.Tag = pis_id[i];
                 }
             }
             catch (Exception ex)

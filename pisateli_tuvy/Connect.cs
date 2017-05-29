@@ -7,6 +7,7 @@ using System.Data.SQLite;
 using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Windows;
+using System.IO;
 
 namespace pisateli_tuvy
 {
@@ -140,12 +141,30 @@ namespace pisateli_tuvy
         }*/
         public BitmapImage GetImage(string imageUri)
         {
-            var bitmapImage = new BitmapImage();
-            bitmapImage.BeginInit();
-            bitmapImage.UriSource = new Uri(path + "\\all\\img\\" + imageUri, UriKind.RelativeOrAbsolute);
-            bitmapImage.EndInit();
+            BitmapImage bitmapImage = new BitmapImage();
+            using (var fs = new FileStream(path+imageUri, FileMode.Open))
+            {
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = fs;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+            }
+            bitmapImage.Freeze();
             return bitmapImage;
         }
+        public BitmapImage GetImage2(string imageUri)
+        {
+            BitmapImage bitmapImage = new BitmapImage();
+            using (var fs = new FileStream(imageUri, FileMode.Open))
+            {
 
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = fs;
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+            }
+            bitmapImage.Freeze();
+            return bitmapImage;
+        }
     }
 }

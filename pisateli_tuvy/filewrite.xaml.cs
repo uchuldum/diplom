@@ -135,6 +135,7 @@ namespace pisateli_tuvy
                 string[] all_fam = con.Reader_Array("select chog_fam from chogaalchy where chog_fam like '" + txt + "%'", count);
                 string[] all_imya = con.Reader_Array("select chog_imya from chogaalchy where chog_fam like '" + txt + "%'", count);
                 string[] all_otch = con.Reader_Array("select chog_otch from chogaalchy where chog_fam like '" + txt + "%'", count);
+                string[] all_folder = con.Reader_Array("select folder from chogaalchy where chog_fam like '" + txt + "%'", count);
                 if (count > 0)
                 {
                     for (int i = 0; i < count; ++i)
@@ -146,7 +147,8 @@ namespace pisateli_tuvy
                         stp.Background = Brushes.LightBlue;
                         stp.Margin = new Thickness(0, 20, 0, 0);
                         Image img = new Image();
-                        if (File.Exists(path + "all\\img\\" + all_img[i])) img.Source = con.GetImage(all_img[i]);
+                        if (File.Exists(path + "pisateli\\" + all_folder[i] + "\\" + all_img[i])) img.Source = con.GetImage("\\pisateli\\" + all_folder[i] + "\\" + all_img[i]);
+                        else img.Source = con.GetImage("\\all\\img\\default.png");
                         stp.Children.Add(img);
                         TextBlock text = new TextBlock();
                         text.FontSize = 14;
