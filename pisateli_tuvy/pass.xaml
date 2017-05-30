@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pisateli_tuvy"
         mc:Ignorable="d"
-        Title="pass" Height="733.52" Width="794.143">
+        Title="Административная панель" Height="733.52" Width="794.143">
     <ScrollViewer>
         <StackPanel VerticalAlignment="Top">
             <Button Name="Back" Visibility="Collapsed" Click="Button_Click_4" Margin="0 5 0 0" Width="30" HorizontalAlignment="Left" Height="20" Content="Back">

@@ -53,38 +53,57 @@ namespace pisateli_tuvy
 
             Menu.Children.Clear();
 
+          
             //string[] menu_item = new string[count];
             for (int i=0;i<15;++i)
             {
+                Border b = new Border();
+                b.BorderThickness = new Thickness(0.5);
+                b.BorderBrush = Brushes.Black;
+
                 StackPanel stp = new StackPanel();
                 stp.VerticalAlignment = VerticalAlignment.Center;
                 
-                stp.Margin = new Thickness(0,0,0,10);
+                stp.Margin = new Thickness(0,0,0,15);
                 stp.Width = Menu.Width;
                 stp.Tag = menu_id[i].Trim();
-                
+              
                 foreach(var a in menu_item_parent)
                 {
                     if(stp.Tag.ToString() == a)
                     {
-                        stp.Margin = new Thickness(20, 0, 0, 10);
+                        stp.Margin = new Thickness(20, 0, 0, 20);
+                        stp.Visibility = Visibility.Collapsed;
                     }
                 }
-                stp.Height = 40;
+                stp.Height = 45;
                 
                 TextBlock txb = new TextBlock();
                 txb.VerticalAlignment = VerticalAlignment.Center;
                 txb.TextWrapping = TextWrapping.Wrap;
                 txb.Width = stp.Width;
-                txb.FontSize = 16;
+                txb.FontSize = 17;
                 txb.Text = menu_item[i];
                 Menu.Children.Add(stp);
                 stp.Children.Add(txb);
-                stp.PreviewMouseUp += new MouseButtonEventHandler(stp_MouseUp);
-                stp.MouseEnter += new MouseEventHandler(stP_MouseEnter);
-                stp.MouseLeave += new MouseEventHandler(stP_MouseLeave2);
+                stp.Children.Add(b);
+                stp.PreviewMouseUp +=  new MouseButtonEventHandler(stp_MouseUp);
+                stp.MouseEnter += (s, j) =>
+                {
+                    txb.FontStyle = FontStyles.Oblique;
+                    txb.Foreground = Brushes.LightBlue;
+                    Mouse.OverrideCursor = Cursors.Hand;
+                };//new MouseEventHandler(stP_MouseEnter);
+                stp.MouseLeave += (s, j) =>
+                {
+                    txb.FontStyle = FontStyles.Normal;
+                    txb.Foreground = Brushes.Black;
+                    Mouse.OverrideCursor = Cursors.Arrow;
+                };// new MouseEventHandler(stP_MouseLeave2);
             }
         }
+        bool five=false;
+        bool ten = false;
         private void stp_MouseUp(object sender, System.EventArgs e)
         {
             StackPanel stp = (StackPanel)sender;
@@ -102,6 +121,20 @@ namespace pisateli_tuvy
                 case 4: raboty_about(glob_autor);
                     break;
                 case 5:
+                    {
+                        foreach(StackPanel panel in Menu.Children)
+                        {
+                            if (panel.Tag.ToString() == "6" && five == false || panel.Tag.ToString() == "7" && five == false)
+                            {
+                                panel.Visibility = Visibility.Visible;
+                            }
+                            else if (panel.Tag.ToString() == "6" && five == true || panel.Tag.ToString() == "7" && five == true)
+                            {
+                                panel.Visibility = Visibility.Collapsed;
+                            }
+                        }
+                        five = !five;
+                    };
                     break;
                 case 6:perevod_other(glob_autor);
                     break;
@@ -112,6 +145,20 @@ namespace pisateli_tuvy
                 case 9:stih_pes(glob_autor);
                     break;
                 case 10:
+                    {
+                        foreach (StackPanel panel in Menu.Children)
+                        {
+                            if ((panel.Tag.ToString() == "11" || panel.Tag.ToString() == "12" || panel.Tag.ToString() == "13" || panel.Tag.ToString() == "14" || panel.Tag.ToString() == "15") && ten == false)
+                            {
+                                panel.Visibility = Visibility.Visible;
+                            }
+                            else if ((panel.Tag.ToString() == "11" || panel.Tag.ToString() == "12" || panel.Tag.ToString() == "13" || panel.Tag.ToString() == "14" || panel.Tag.ToString() == "15") && ten == true)
+                            {
+                                panel.Visibility = Visibility.Collapsed;
+                            }
+                        }
+                        ten = !ten;
+                    };
                     break;
                 case 11:
                     break;
@@ -845,9 +892,11 @@ namespace pisateli_tuvy
         private void stP_MouseEnter(object sender, System.EventArgs e)
         {
             StackPanel stp = (StackPanel)sender;
+           
             var text = stp.Children.OfType<TextBlock>().FirstOrDefault();
             text.FontStyle = FontStyles.Oblique;
-            stp.Background = Brushes.LightBlue;
+            text.Foreground = Brushes.LightBlue;
+            //stp.Background = Brushes.LightBlue;
             Mouse.OverrideCursor = Cursors.Hand;
         }
         private void stP_MouseLeave(object sender, System.EventArgs e)
@@ -856,7 +905,8 @@ namespace pisateli_tuvy
             Mouse.OverrideCursor = Cursors.Arrow;
             var text = stp.Children.OfType<TextBlock>().FirstOrDefault();
             text.FontStyle = FontStyles.Normal;
-            stp.Background = Brushes.LightSteelBlue;
+            text.Foreground = Brushes.Black;
+            //stp.Background = Brushes.LightSteelBlue;
 
         }
         private void stP_MouseLeave2(object sender, System.EventArgs e)
@@ -1019,7 +1069,6 @@ namespace pisateli_tuvy
                     txtblk.FontSize = 16;
 
                     stP.Orientation = Orientation.Horizontal;
-                    
 
                    
                     stP.Children.Add(b);

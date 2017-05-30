@@ -259,13 +259,13 @@ namespace pisateli_tuvy
                 {
                     path_nositel = fbd.SelectedPath;
                 }
-                pm.BeginWaiting();
+               /* pm.BeginWaiting();
                 pm.ChangeStatus("Loading...");
-                pm.SetProgressMaxValue(41);
-                for(int i = 0;i<41;i++) pm.ChangeProgress(i);
+                pm.SetProgressMaxValue(41);*/
+                //for(int i = 0;i<41;i++) pm.ChangeProgress(i);
                 FolderCopy(path_trial, path_nositel, true);
                 FolderDelete(path_trial);
-                pm.EndWaiting();
+               // pm.EndWaiting();
 
             }
 

@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pisateli_tuvy"
         mc:Ignorable="d"
-      Title="filewrite" Height="300" Width="550">
+      Title="Запись на носитель" Height="300" Width="550">
     <ScrollViewer>
         <StackPanel>
             <StackPanel Name="AUTORS" Orientation="Vertical" Margin="0 10 0 0" Visibility="Collapsed">
-                <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Margin="0 0 0 10">
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="0 0 0 10">
                     <TextBlock Margin="0 0 50 0">Введите фамилию автора</TextBlock>
                     <TextBox Width="250" Name="autor" Margin="0 0 10 0"></TextBox>
                     <Button Content="Найти" Name="Find" Click="Find_Click"></Button>
@@ -18,7 +18,7 @@
 
                 </StackPanel>
             </StackPanel>
-            <StackPanel HorizontalAlignment="Center" Name="record" Visibility="Visible">
+            <StackPanel HorizontalAlignment="Center" Name="record" Visibility="Collapsed">
                 <TextBlock FontSize="20" FontFamily="Comic Sans ms" Margin="0 10 0 10">Выберите на какой тип носителя следует записать файл</TextBlock>
                 <RadioButton Name="Disk" Margin="0 0 0 10">
                     <TextBlock FontSize="16" FontFamily="Comic Sans ms" >

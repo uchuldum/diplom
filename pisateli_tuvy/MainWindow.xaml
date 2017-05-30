@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:pisateli_tuvy"
         xmlns:shema ="clr-namespace:pisateli_tuvy"
         mc:Ignorable="d"
-        Title="MainWindow"   FontFamily="Gulim" Loaded="Window_Loaded" x:Name="main_window" d:DesignWidth="2108.187" d:DesignHeight="1376.121" >
+        Title="Писатели Тувы"   FontFamily="Gulim" Loaded="Window_Loaded" x:Name="main_window" d:DesignWidth="2108.187" d:DesignHeight="1376.121" >
         <Window.Resources>
             <SolidColorBrush x:Key="brushWatermarkBackground" Color="White" />
             <SolidColorBrush x:Key="brushWatermarkBorder" Color="Indigo" />
