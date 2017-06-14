@@ -7,7 +7,7 @@ namespace pisateli_tuvy
         public class RoundedCornersPolygon : Shape
         {
             private readonly Path _path;
-
+            public int Count;
             #region Properties 
 
             private PointCollection _points;

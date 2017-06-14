@@ -148,19 +148,19 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\brit.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\logo_main.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\main_logo_rus.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\rus.png" />
+    <Resource Include="Resources\brit.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\tuv.png" />
+    <Resource Include="Resources\rus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\tuv.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\System.Data.SQLite.Core.1.0.104.0\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.104.0\build\net451\System.Data.SQLite.Core.targets')" />

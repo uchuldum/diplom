@@ -25,9 +25,13 @@
                     <Image VerticalAlignment="Center" HorizontalAlignment="Left" Height="107" Width="440" PreviewMouseUp="Image_PreviewMouseUp" MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave" x:Name="main_img"/>
                     <StackPanel Orientation="Horizontal" Margin="240 0 0 0" VerticalAlignment="Center">
                         <Button BorderThickness="0" Content="Чогаалчылар" Background="#FF0096D3" BorderBrush="#FF0096D3"  Height="53" x:Name="button2" Opacity="1" Width="128" Foreground="White" FontFamily="Times New Roman" FontSize="14" MouseEnter="button2_MouseEnter" MouseLeave="button2_MouseLeave" Click="button2_Click" />
-                        <Button Background="#FF0096D3" BorderBrush="#FF0096D3" BorderThickness="0" Content="Программалар" FontFamily="Times New Roman" FontSize="14" Foreground="White" Height="53" HorizontalAlignment="Left"  x:Name="button3" Opacity="1" VerticalAlignment="Top" Width="128" MouseEnter="button3_MouseEnter" MouseLeave="button3_MouseLeave" />
                         <Button Background="#FF0096D3" BorderBrush="#FF0096D3" BorderThickness="0" Content="Запись в файл" FontFamily="Times New Roman" FontSize="14" Foreground="White" Height="53" HorizontalAlignment="Left"  x:Name="button4" Opacity="1" VerticalAlignment="Top" Width="96" MouseEnter="button4_MouseEnter" MouseLeave="button4_MouseLeave" Click="button4_Click" />
-                        <Button Background="#FF0096D3" BorderBrush="#FF0096D3" BorderThickness="0" Content="Admin" FontFamily="Times New Roman" FontSize="14" Foreground="White" Height="53" HorizontalAlignment="Left"  x:Name="button5" Opacity="1" VerticalAlignment="Top" Width="92" MouseLeave="button5_MouseLeave" MouseEnter="button5_MouseEnter" Click="button5_Click" />
+                        <StackPanel Orientation="Vertical">
+                            <Button Background="#FF0096D3" BorderBrush="#FF0096D3" BorderThickness="0" Content="Кирери" FontFamily="Times New Roman" FontSize="14" Foreground="White" Height="53" HorizontalAlignment="Left"  x:Name="button5" Opacity="1" VerticalAlignment="Top" Width="92" MouseLeave="button5_MouseLeave" MouseEnter="button5_MouseEnter" Click="button5_Click" />
+                            <StackPanel x:Name="Admin_Stack" Width="400" Height="100" Visibility="Collapsed">
+                                
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top">
                         <Image Source="Resources/tuv.png" Height="14"  x:Name="image2"  MouseEnter="image2_MouseEnter" MouseLeave="image2_MouseLeave" PreviewMouseUp="image2_PreviewMouseUp" />

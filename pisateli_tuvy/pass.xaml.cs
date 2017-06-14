@@ -5,10 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.IO;
 using Microsoft.Win32;
-using System.Linq;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-using System.Windows.Media.Imaging;
+
 
 namespace pisateli_tuvy
 {
@@ -27,12 +24,15 @@ namespace pisateli_tuvy
         static string Writer_Photo;
         static string pis_image = "";
         static int Menu_Admin;
+        static bool ChangeBtn = false;
         ////////УДАЛЕНИЕ ДОБАВЛЕНИЕ ИЗМЕНЕНИЕ МАТЕРИАЛА В БД
+        Button nazad = new Button();
+        Button btn = new Button();
         public void Delete_File(string Table,string Pole,int id,string Folder, int add)
         {
             try
             {
-                string kniganame = con.Reader("select " + Pole + "_title from "+Table+" where " + Pole + "_id = " + id);
+               string kniganame = con.Reader("select " + Pole + "_title from "+Table+" where " + Pole + "_id = " + id);
                string knigapath = con.Reader("select " + Pole + "_text from "+Table+" where " + Pole + "_id = " + id);
                 //////УДАЛЕНИЕ
                 if (add == 1)
@@ -97,8 +97,21 @@ namespace pisateli_tuvy
                 {
                     TV.Visibility = Visibility.Collapsed;
                     webbrowser.Visibility = Visibility.Visible;
-                    webbrowser.Navigate(folder_path + Folder + "\\" + knigapath);
-                    Button btn = new Button();
+                    string deleteme = folder_path + Folder + "\\" + knigapath;
+                    con.OpenPdf(folder_path + Folder + "\\" + knigapath, webbrowser);
+                    nazad.Content = "Назад к списку";
+                    Web_Tree.Children.Add(nazad);
+                    nazad.Margin = new Thickness(0,0,0,10);
+                    nazad.Width = 150;
+                    nazad.Height = 20;
+                    nazad.Click += (q,j) =>
+                    {
+                        TV.Visibility = Visibility.Visible;
+                        webbrowser.Visibility = Visibility.Collapsed;
+                        Web_Tree.Children.Remove(btn);
+                        Web_Tree.Children.Remove(nazad);
+                        ChangeBtn = false;
+                    };
                     btn.Content = "Загрузить другой файл";
                     Web_Tree.Children.Add(btn);
                     btn.Width = 150;
@@ -110,12 +123,9 @@ namespace pisateli_tuvy
                         {
                             case MessageBoxResult.Yes:
                                 {
-                                   
-                                    webbrowser.Navigate(@"c:\\biographia.pdf");
-                                    File.Delete(folder_path + Folder + "\\" + knigapath);
                                     string s = "";
                                     string _output = "";
-                                    OpenFileDialog ofd = new OpenFileDialog();  
+                                    OpenFileDialog ofd = new OpenFileDialog();
                                     ofd.Title = "as";
                                     ofd.InitialDirectory = @"C:\";
                                     ofd.Filter = "Pdf Files|*.pdf";
@@ -137,14 +147,16 @@ namespace pisateli_tuvy
                                         }
                                         File.Copy(s, folder_path + Folder + "\\" + p + ".pdf");
                                         con.ExecuteNonQuery("update " + Table + " set " + Pole + "_text = '" + p + ".pdf' where " + Pole + "_id = " + id);
+                                        webbrowser.Navigate(folder_path + Folder + "\\" + p + ".pdf");
                                         MessageBox.Show("Изменено.");
+                                        File.Delete(deleteme);
                                     }
                                 }
                                 break;
                             case MessageBoxResult.No: break;
                         }
                     };
-                    
+                    ChangeBtn = true;
                 }
             }
             catch (Exception ex)
@@ -197,11 +209,11 @@ namespace pisateli_tuvy
                                 Delete_File("nomnary", "nomnary", Convert.ToInt32(tvitem.Tag), "nomnary", 2);
                                 Vypush_knigi();
                             }
-                          /*  else
+                            else
                             {
                                 Delete_File("nomnary", "nomnary", Convert.ToInt32(tvitem.Tag), "nomnary", 0);
                                
-                            }*/
+                            }
                         };
                     }
                 }
@@ -416,6 +428,14 @@ namespace pisateli_tuvy
                         webbrowser.Visibility = Visibility.Collapsed;
                         TV.Visibility = Visibility.Collapsed;
                         spisok_v_db.Visibility = Visibility.Collapsed;
+                       
+                        if (ChangeBtn == true)
+                        {
+                            Web_Tree.Children.Remove(nazad);
+                            Web_Tree.Children.Remove(btn);
+                            ChangeBtn = false;
+                        }
+
                     }
                     else
                     {
@@ -1259,6 +1279,28 @@ namespace pisateli_tuvy
             }
             if (File.Exists(pis_image)) add_img_pis.Source = con.GetImage2(pis_image);
             else add_img_pis.Source = con.GetImage("\\all\\img\\default.png");
+        }
+
+        private void Button_Click_11(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Border_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Border b = (Border)sender;
+            BrushConverter bc = new BrushConverter();
+            Brush brush = (Brush)bc.ConvertFrom("#FF0096D3");
+            brush.Freeze();
+            b.Background = brush;
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void Delete_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Border b = (Border)sender;
+            b.Background = Brushes.White;
+            Mouse.OverrideCursor = Cursors.Arrow;
         }
     }
 }

@@ -26,21 +26,24 @@
                     </Button>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Name="adminPanel" Visibility="Collapsed">
-                <StackPanel Name="Menu" Orientation="Horizontal" Margin="20 20 0 0">
-                    <Border BorderBrush="Gray" BorderThickness="1">
-                        <StackPanel Name="Add" PreviewMouseUp="Add_PreviewMouseUp" >
-                            <TextBlock FontSize="14" Text="Добавить писателя"/>
+            <StackPanel Name="adminPanel" Visibility="Visible">
+                <StackPanel Name="Menu" Orientation="Vertical" Margin="20 100 0 0">
+                    <StackPanel Width="600" Height="100" Orientation="Vertical">
+                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" FontFamily="Comic Sans MS" Text="Выберите, пожалуйста, интересующий вас пункт меню :" Margin="27,0,26,0"/>
+                    </StackPanel>
+                    <Border MouseLeave="Delete_MouseLeave" Name="Add" PreviewMouseUp="Add_PreviewMouseUp" MouseEnter="Border_MouseEnter" CornerRadius="10 10 10 10" BorderBrush="Gray" BorderThickness="1" Width="400" Height="60" >
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center"  >
+                            <TextBlock FontSize="18" Text="Создать нового писателя"/>
                         </StackPanel>
                     </Border>
-                    <Border BorderBrush="Gray" BorderThickness="1" Margin="50 0 50 0">
-                        <StackPanel Name="Change" PreviewMouseUp="Change_PreviewMouseUp">
-                            <TextBlock FontSize="14" Text="Изменить писателя"/>
+                    <Border MouseLeave="Delete_MouseLeave" Name="Change" PreviewMouseUp="Change_PreviewMouseUp" MouseEnter="Border_MouseEnter" CornerRadius="10 10 10 10" BorderBrush="Gray"  BorderThickness="1" Margin="0 20 0 0" Width="400" Height="60">
+                        <StackPanel  VerticalAlignment="Center" HorizontalAlignment="Center" >
+                            <TextBlock FontSize="18" Text="Редактировать писателя в базе данных"/>
                         </StackPanel>
                     </Border>
-                    <Border BorderBrush="Gray" BorderThickness="1">
-                        <StackPanel Name="Delete" PreviewMouseUp="Delete_PreviewMouseUp">
-                            <TextBlock FontSize="14" Text="Удалить писателя"/>
+                    <Border MouseLeave="Delete_MouseLeave" Name="Delete" PreviewMouseUp="Delete_PreviewMouseUp" MouseEnter="Border_MouseEnter" CornerRadius="10 10 10 10" BorderBrush="Gray" BorderThickness="1" Margin="0 20 0 0" Width="400" Height="60" >
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock FontSize="18" Text="Удалить писателя из базы данных"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
@@ -325,8 +328,7 @@
                     <StackPanel Name="Web_Tree" Orientation="Vertical">
                         <Label Name="spisok_v_db" Visibility="Collapsed" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold">Список существующих в базе данных</Label>
                         <WebBrowser Visibility="Collapsed" Height="auto" x:Name="webbrowser" MaxWidth="2000" MinWidth="600"/>
-                        <TreeView BorderThickness="0" Visibility="Collapsed" Height="auto" x:Name="TV" MaxWidth="2000" MinWidth="600"/> 
-
+                        <TreeView BorderThickness="0" Visibility="Collapsed" Height="auto" x:Name="TV" MaxWidth="2000" MinWidth="600"/>
                     </StackPanel>
                 </StackPanel>
              </StackPanel>

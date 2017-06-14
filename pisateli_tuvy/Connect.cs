@@ -166,5 +166,10 @@ namespace pisateli_tuvy
             bitmapImage.Freeze();
             return bitmapImage;
         }
+        public void OpenPdf(string pdfuri,WebBrowser browser)
+        {
+            Uri uri = new Uri(pdfuri, UriKind.RelativeOrAbsolute);
+            browser.Navigate(uri);
+        }
     }
 }

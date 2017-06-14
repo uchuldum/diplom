@@ -614,108 +614,7 @@ namespace pisateli_tuvy
         public MainWindow()
         {
             InitializeComponent();
-            int index = 1;
-            try
-            {
-                main_tuv.Visibility = Visibility.Visible;
-
-                /////////////// КАРТА ////////
-                for (int i = 0; i < 18; ++i)
-                {
-                    RoundedCornersPolygon map_pol = new RoundedCornersPolygon();
-                    map_pol.ArcRoundness = 25;
-                    //   Polygon map_pol = new Polygon();
-                    map_pol.Stroke = Brushes.White;
-                    //map_pol.Fill = Brushes.Blue;
-                    var brush = new SolidColorBrush(Color.FromArgb(255, 0, 150, 211));
-                    map_pol.Fill = brush;
-                    map_pol.StrokeThickness = 1;
-                    string a = con.Reader("select coords from region where region_id = " + (i + 1).ToString());
-                    map_pol.Tag = con.Reader("select r_name from region where region_id = " + (i + 1).ToString());
-                    string centr = con.Reader("select r_links from region where region_id = " + (i + 1).ToString());
-                    string capital = con.Reader("select area_name from region where region_id = " + (i + 1).ToString());
-                    //map_pol.Name = ;
-                    string[] split = a.Split(new Char[] { ',' });
-                    string[] centr_arr = centr.Split(new Char[] { ',' });
-
-                    int centr_X = Convert.ToInt32(centr_arr[0]);
-                    int centr_Y = Convert.ToInt32(centr_arr[1]);
-
-                    Ellipse el = new Ellipse();
-                    el.Width = 10;
-                    el.Height = 10;
-                    el.StrokeThickness = 2;
-                    el.Stroke = Brushes.Black;
-                    el.Fill = Brushes.White;
-                    el.Tag = capital;
-                    if (centr_X == 547 || centr_X == 514 || centr_X == 397 || centr_X == 270)
-                    {
-                        el.Width = 15;
-                        el.Height = 15;
-                        el.StrokeThickness = 3;
-                    }
-                    el.MouseEnter += (s, j) =>
-                    {
-                        Mouse.OverrideCursor = Cursors.Hand;
-                        map_pol.Fill = Brushes.Yellow;
-                        Point position = Mouse.GetPosition(Map);
-                        TextBlock text = new TextBlock();
-                        text.Text = el.Tag.ToString();
-                        text.FontFamily = new FontFamily("Comic Sans MS");
-                        text.Foreground = Brushes.Yellow;
-                        text.Name = "text_d";
-                        int length = text.Text.Length;
-                        Canvas.SetLeft(text, (position.X + 22));
-                        Canvas.SetTop(text, (position.Y + 25));
-                        Rectangle rect = new Rectangle();
-                        rect.StrokeThickness = 1;
-                        rect.Stroke = Brushes.Black;
-                        rect.Fill = Brushes.Black;
-                        rect.RadiusX = 5;
-                        rect.RadiusY = 5;
-                        rect.Name = "distr";
-                        rect.Width = length * 8;
-                        rect.Height = 30;
-                        Canvas.SetLeft(rect, (position.X + 20));
-                        Canvas.SetTop(rect, (position.Y + 20));
-                        var rectangle = (UIElement)LogicalTreeHelper.FindLogicalNode(Map, "distr"); ////ОЧИСТКА ПРЕДЫДУЩЕГО
-                        var text_dist = (UIElement)LogicalTreeHelper.FindLogicalNode(Map, "text_d");
-                        Map.Children.Remove(rectangle);
-                        Map.Children.Remove(text_dist);
-                        Map.Children.Add(rect);
-                        Map.Children.Add(text);
-                    };
-                    el.MouseLeave += (s, j) =>
-                    {
-                        Mouse.OverrideCursor = Cursors.Arrow;
-                    };
-                    el.PreviewMouseUp += (s, j) =>
-                    {
-                        item_mouseUp(map_pol, j);
-                    };
-                    int k = split.Length;
-                    for (int j = 0; j < k - 1; j = j + 2)
-                    {
-                        int x = Convert.ToInt32(split[j]);
-                        int y = Convert.ToInt32(split[j + 1]);
-                        map_pol.Points.Add(new Point(x, y));
-                    }
-
-                    Map.Children.Add(map_pol);
-                    Map.Children.Add(el);
-                    Canvas.SetLeft(el, centr_X);
-                    Canvas.SetTop(el, centr_Y);
-                    map_pol.MouseEnter += new MouseEventHandler(item_MouseEnter);
-                    map_pol.MouseMove += new MouseEventHandler(item_MouseMove);
-                    map_pol.MouseLeave += new MouseEventHandler(item_MouseLeave);
-                    map_pol.PreviewMouseUp += new MouseButtonEventHandler(item_mouseUp);
-                    
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("" + ex);
-            }
+            main();
 
         }
         private void item_MouseMove(object sender, EventArgs e)
@@ -766,40 +665,35 @@ namespace pisateli_tuvy
             p.Fill = brush;
         }
 
-
+        
         /////////СОБЫТИЕ НА НАЖИТИЕ КОЖУУНА
-        private void item_mouseUp(object sender, System.EventArgs e)
+        public void POLYGON(string name)
         {
             main_tuv.Visibility = Visibility.Collapsed;
-            RoundedCornersPolygon p = (RoundedCornersPolygon)sender;
             stack_distr.Visibility = Visibility.Visible;
             writers.Children.Clear();
             try
-             {
-                int region_id = Convert.ToInt32(con.Reader("select region_id from region where r_name like '" + p.Tag+"'"));
-                string region_photo =  "\\all\\dist_img\\" + region_id+".png";
+            {
+                int region_id = Convert.ToInt32(con.Reader("select region_id from region where r_name like '" + name + "'"));
+                string region_photo = "\\all\\dist_img\\" + region_id + ".png";
                 string region_text = con.Reader("select r_info from region where region_id = " + region_id);
-                 //////////////////Загрузили изображения кожуунов
-                 distr_img.Source = GetImage2(region_photo);
+                //////////////////Загрузили изображения кожуунов
+                distr_img.Source = GetImage2(region_photo);
 
-                 /////Загрузили тексты кожуунов
-                 dist_txt.Document.Blocks.Clear();
-                 dist_txt.Document.Blocks.Add(new Paragraph(new Run(region_text)));
-
-
-
-                 ////////Писатели В КОЖУУНАХ    
-
-                 int count = con.ExecuteScalar("select count (*) from chogaalchy where chog_region_id=" + region_id); ///КОЛИЧЕСТВО ПИСАТЕЛЕЙ В ДАННОМ РЕГИОНЕ
-                 if(count!=0)
-                 for (int i = 0; i < count; ++i)
-                 {
-                         string[] pis_surname = con.Reader_Array("select chog_fam from chogaalchy where chog_region_id=" + region_id, count);
-                         string[] pis_name = con.Reader_Array("select chog_imya from chogaalchy where chog_region_id=" + region_id, count);
-                         string[] pis_patronymic = con.Reader_Array("select chog_otch from chogaalchy where chog_region_id=" + region_id, count);
-                         string[] pis_img =con.Reader_Array("select chog_photo from chogaalchy where chog_region_id=" + region_id, count);
-                         string[] pis_id = con.Reader_Array("select chog_id from chogaalchy where chog_region_id=" + region_id, count);
-                         string[] pis_folder = con.Reader_Array("select folder from chogaalchy where chog_region_id=" + region_id, count);
+                /////Загрузили тексты кожуунов
+                dist_txt.Document.Blocks.Clear();
+                dist_txt.Document.Blocks.Add(new Paragraph(new Run(region_text)));
+                ////////Писатели В КОЖУУНАХ    
+                int count = con.ExecuteScalar("select count (*) from chogaalchy where chog_region_id=" + region_id); ///КОЛИЧЕСТВО ПИСАТЕЛЕЙ В ДАННОМ РЕГИОНЕ
+                if (count != 0)
+                    for (int i = 0; i < count; ++i)
+                    {
+                        string[] pis_surname = con.Reader_Array("select chog_fam from chogaalchy where chog_region_id=" + region_id, count);
+                        string[] pis_name = con.Reader_Array("select chog_imya from chogaalchy where chog_region_id=" + region_id, count);
+                        string[] pis_patronymic = con.Reader_Array("select chog_otch from chogaalchy where chog_region_id=" + region_id, count);
+                        string[] pis_img = con.Reader_Array("select chog_photo from chogaalchy where chog_region_id=" + region_id, count);
+                        string[] pis_id = con.Reader_Array("select chog_id from chogaalchy where chog_region_id=" + region_id, count);
+                        string[] pis_folder = con.Reader_Array("select folder from chogaalchy where chog_region_id=" + region_id, count);
                         StackPanel stP = new StackPanel();
                         ImageBrush img = new ImageBrush();
                         TextBlock txtblk = new TextBlock();
@@ -862,32 +756,33 @@ namespace pisateli_tuvy
                         };
                         stP.PreviewMouseUp += new System.Windows.Input.MouseButtonEventHandler(stP_MouseUp);
                         stP.Tag = pis_id[i];
-                 }
-                 else
-                 {
-                     StackPanel stP = new StackPanel();
-                     TextBlock txtB = new TextBlock();
-                     txtB.Text = "К сожаления в базе нет писателей по этому кожууну";
-                     txtB.VerticalAlignment = VerticalAlignment.Center;
-                     txtB.Margin = new Thickness(5, 0, 0, 0);
-                     stP.Orientation = Orientation.Horizontal;
-                     stP.Background = Brushes.LightSteelBlue;
-                     txtB.FontFamily = new FontFamily("Arial");
-                     txtB.FontSize = 16;
-                     stP.MaxWidth = 1024;
-                     stP.MinWidth = 800;
-                     stP.Height = 100;
-                     stP.Width = writers.Width;
-                     stP.Margin = new Thickness(0, 20, 0, 0);
-                     writers.Children.Add(stP);
-                     stP.Children.Add(txtB);
-                 }
-             }
-             catch (Exception ex)
-             {
-                 MessageBox.Show(ex + "");
-             }
+                    }
+                else
+                {
+                    StackPanel stP = new StackPanel();
+                    TextBlock txtB = new TextBlock();
+                    txtB.Text = "К сожаления в базе нет писателей по этому кожууну";
+                    txtB.VerticalAlignment = VerticalAlignment.Center;
+                    txtB.Margin = new Thickness(5, 0, 0, 0);
+                    stP.Orientation = Orientation.Horizontal;
+                    stP.Background = Brushes.LightSteelBlue;
+                    txtB.FontFamily = new FontFamily("Arial");
+                    txtB.FontSize = 16;
+                    stP.MaxWidth = 1024;
+                    stP.MinWidth = 800;
+                    stP.Height = 100;
+                    stP.Width = writers.Width;
+                    stP.Margin = new Thickness(0, 20, 0, 0);
+                    writers.Children.Add(stP);
+                    stP.Children.Add(txtB);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
         }
+       
         //////Изменение курсора на STACKPANEL
         private void stP_MouseEnter(object sender, System.EventArgs e)
         {
@@ -942,9 +837,10 @@ namespace pisateli_tuvy
             this.pisatel.Visibility = Visibility.Hidden;
             this.main_tuv.Visibility = Visibility.Visible;
             this.WindowState = WindowState.Maximized;
+            
             TextRange range;
             FileStream fStream;
-
+           
             if (File.Exists(path + "\\all\\rtf\\1.rtf"))
             {
                 range = new TextRange(this.richTextBox1.Document.ContentStart, this.richTextBox1.Document.ContentEnd);
@@ -959,7 +855,163 @@ namespace pisateli_tuvy
                 range.Load(fStream, DataFormats.Rtf);
                 fStream.Close();
             }
+            int index = 1;
+            try
+            {
+                main_tuv.Visibility = Visibility.Visible;
+                int[] writers_count = new int[18];
+                /////////////// КАРТА ////////
+                for (int i = 0; i < 18; ++i)
+                {
+                    RoundedCornersPolygon map_pol = new RoundedCornersPolygon();
+                    map_pol.ArcRoundness = 25;
+                    //   Polygon map_pol = new Polygon();
+                    map_pol.Stroke = Brushes.White;
+                    //map_pol.Fill = Brushes.Blue;
+                    var brush = new SolidColorBrush(Color.FromArgb(255, 0, 150, 211));
+                    map_pol.Fill = brush;
+                    map_pol.StrokeThickness = 1;
+                    string a = con.Reader("select coords from region where region_id = " + (i + 1).ToString());
+                    map_pol.Tag = con.Reader("select r_name from region where region_id = " + (i + 1).ToString());
+                    string centr = con.Reader("select r_links from region where region_id = " + (i + 1).ToString());
+                    string capital = con.Reader("select area_name from region where region_id = " + (i + 1).ToString());
+                    writers_count[i] = con.ExecuteScalar("select count (*) from chogaalchy where chog_region_id = " + (i + 1).ToString());
+                    string[] split = a.Split(new Char[] { ',' });
+                    string[] centr_arr = centr.Split(new Char[] { ',' });
 
+                    int centr_X = Convert.ToInt32(centr_arr[0]);
+                    int centr_Y = Convert.ToInt32(centr_arr[1]);
+
+                    Ellipse el = new Ellipse();
+                    el.Width = 10;
+                    el.Height = 10;
+                    el.StrokeThickness = 2;
+                    el.Stroke = Brushes.Black;
+                    el.Fill = Brushes.White;
+                    el.Tag = capital;
+                    if (centr_X == 547 || centr_X == 514 || centr_X == 397 || centr_X == 270)
+                    {
+                        el.Width = 15;
+                        el.Height = 15;
+                        el.StrokeThickness = 3;
+                    }
+                    el.MouseEnter += (s, j) =>
+                    {
+                        Mouse.OverrideCursor = Cursors.Hand;
+                        map_pol.Fill = Brushes.Yellow;
+                        Point position = Mouse.GetPosition(Map);
+                        TextBlock text = new TextBlock();
+                        text.Text = el.Tag.ToString();
+                        text.FontFamily = new FontFamily("Comic Sans MS");
+                        text.Foreground = Brushes.Yellow;
+                        text.Name = "text_d";
+                        int length = text.Text.Length;
+                        Canvas.SetLeft(text, (position.X + 22));
+                        Canvas.SetTop(text, (position.Y + 25));
+                        Rectangle rect = new Rectangle();
+                        rect.StrokeThickness = 1;
+                        rect.Stroke = Brushes.Black;
+                        rect.Fill = Brushes.Black;
+                        rect.RadiusX = 5;
+                        rect.RadiusY = 5;
+                        rect.Name = "distr";
+                        rect.Width = length * 8;
+                        rect.Height = 30;
+                        Canvas.SetLeft(rect, (position.X + 20));
+                        Canvas.SetTop(rect, (position.Y + 20));
+                        var rectangle = (UIElement)LogicalTreeHelper.FindLogicalNode(Map, "distr"); ////ОЧИСТКА ПРЕДЫДУЩЕГО
+                        var text_dist = (UIElement)LogicalTreeHelper.FindLogicalNode(Map, "text_d");
+                        Map.Children.Remove(rectangle);
+                        Map.Children.Remove(text_dist);
+                        Map.Children.Add(rect);
+                        Map.Children.Add(text);
+                    };
+                    el.MouseLeave += (s, j) =>
+                    {
+                        Mouse.OverrideCursor = Cursors.Arrow;
+                    };
+                    el.PreviewMouseUp += (s, j) =>
+                    {
+                        POLYGON(map_pol.Tag.ToString());
+                    };
+                    int k = split.Length;
+                    for (int j = 0; j < k - 1; j = j + 2)
+                    {
+                        int x = Convert.ToInt32(split[j]);
+                        int y = Convert.ToInt32(split[j + 1]);
+                        map_pol.Points.Add(new Point(x, y));
+                    }
+
+                    Map.Children.Add(map_pol);
+                    Map.Children.Add(el);
+                    Canvas.SetLeft(el, centr_X);
+                    Canvas.SetTop(el, centr_Y);
+
+                    map_pol.MouseEnter += new MouseEventHandler(item_MouseEnter);
+                    map_pol.MouseMove += new MouseEventHandler(item_MouseMove);
+                    map_pol.MouseLeave += new MouseEventHandler(item_MouseLeave);
+                    map_pol.PreviewMouseUp += (s, j) =>
+                    {
+                        POLYGON(map_pol.Tag.ToString());
+                    };
+                }
+                for (int i = 0; i < 18; ++i)
+                {
+                    string name = con.Reader("select r_name from region where region_id = " + (i + 1).ToString());
+                    string centr = con.Reader("select r_links from region where region_id = " + (i + 1).ToString());
+                    string[] centr_arr = centr.Split(new Char[] { ',' });
+                    int centr_X = Convert.ToInt32(centr_arr[0]);
+                    int centr_Y = Convert.ToInt32(centr_arr[1]);
+                    if (writers_count[i] != 0)
+                    {
+                        Ellipse metka = new Ellipse();
+                        metka.Width = 30;
+                        metka.Height = 30;
+                        metka.StrokeThickness = 2;
+                        metka.Stroke = Brushes.Black;
+                        metka.Fill = Brushes.Brown;
+                        TextBlock text_metka = new TextBlock();
+                        text_metka.Text = writers_count[i].ToString();
+                        text_metka.FontFamily = new FontFamily("Comic Sans MS");
+                        text_metka.Foreground = Brushes.White;
+                        text_metka.FontSize = 18;
+                        Map.Children.Add(metka);
+                        Canvas.SetLeft(metka, centr_X - 10);
+                        Canvas.SetTop(metka, centr_Y - 30);
+                        Map.Children.Add(text_metka);
+                        Canvas.SetLeft(text_metka, centr_X);
+                        Canvas.SetTop(text_metka, centr_Y - 28);
+
+                        metka.MouseEnter += (s, j) =>
+                        {
+                            text_metka.Foreground = Brushes.Black;
+                            Mouse.OverrideCursor = Cursors.Hand;
+                        };
+                        text_metka.MouseEnter += (s, j) =>
+                        {
+                            text_metka.Foreground = Brushes.Black;
+                            Mouse.OverrideCursor = Cursors.Hand;
+                        };
+                        metka.MouseLeave += (s, j) =>
+                        {
+                            text_metka.Foreground = Brushes.White;
+
+                        };
+                        metka.PreviewMouseUp += (s, j) =>
+                        {
+                            POLYGON(name);
+                        };
+                        text_metka.PreviewMouseUp += (s, j) =>
+                        {
+                            POLYGON(name);
+                        };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("" + ex);
+            }
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -1263,7 +1315,6 @@ namespace pisateli_tuvy
         {
             main_img.Source = GetImage("logo_main.png");
             button2.Content = "Чогаалчылар";
-            button3.Content = "Программалар";
             button4.Content = "Дузалал";
             button5.Content = "Кирери";
             label1.Content = "Чогаалчылар";
@@ -1274,7 +1325,6 @@ namespace pisateli_tuvy
         {
             main_img.Source = GetImage("logo_rus.png");
             button2.Content = "Писатели";
-            button3.Content = "Программы";
             button4.Content = "Помощь";
             button5.Content = "Вход";
             label1.Content = "Писатели";
@@ -1285,7 +1335,6 @@ namespace pisateli_tuvy
         {
             main_img.Source = GetImage("logo_eng.png");
             button2.Content = "Writers";
-            button3.Content = "Programs";
             button4.Content = "Support";
             button5.Content = "Log in";
             label1.Content = "Writers";
@@ -1293,6 +1342,7 @@ namespace pisateli_tuvy
         }
         private void button5_Click(object sender, RoutedEventArgs e)
         {
+            //Admin_Stack.Visibility = Visibility.Visible;
             pass p = new pass();
             p.Show();
         }
