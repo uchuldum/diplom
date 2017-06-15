@@ -8,6 +8,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Windows;
 using System.IO;
+using System.Windows.Documents;
 
 namespace pisateli_tuvy
 {
@@ -170,6 +171,16 @@ namespace pisateli_tuvy
         {
             Uri uri = new Uri(pdfuri, UriKind.RelativeOrAbsolute);
             browser.Navigate(uri);
+        }
+        public void LoadTextDocument(string fileName, RichTextBox rtbMain)
+        {
+            if (File.Exists(fileName))
+            {
+                var range = new TextRange(rtbMain.Document.ContentStart, rtbMain.Document.ContentEnd);
+                var fStream = new FileStream(fileName, FileMode.OpenOrCreate);
+                range.Load(fStream, DataFormats.Text);
+                fStream.Close();
+            }
         }
     }
 }

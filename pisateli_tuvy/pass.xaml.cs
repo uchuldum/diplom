@@ -75,7 +75,6 @@ namespace pisateli_tuvy
                                 if (_output != "")
                                 {
                                     _output = perevod(_output);
-                                    bool k = false;
                                     string p = _output.Substring(0, _output.Length - 4);
                                     int i = 1;
                                     while (File.Exists(folder_path + Folder + "\\" + p + ".pdf"))
@@ -137,7 +136,6 @@ namespace pisateli_tuvy
                                     if (_output != "")
                                     {
                                         _output = perevod(_output);
-                                        bool k = false;
                                         string p = _output.Substring(0, _output.Length - 4);
                                         int i = 1;
                                         while (File.Exists(folder_path + Folder + "\\" + p + ".pdf"))

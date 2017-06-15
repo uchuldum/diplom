@@ -71,7 +71,6 @@ D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\System.Data.SQLite.Linq.
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\EntityFramework.xml
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\EntityFramework.SqlServer.xml
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\System.Data.SQLite.xml
-D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\pisateli_tuvy.csprojResolveAssemblyReference.cache
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\filewrite.g.cs
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\MainWindow.g.cs
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\pass.g.cs
@@ -87,3 +86,4 @@ D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\pisateli_tuvy.csproj.Gen
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\ProgressWindow.g.cs
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\ProgressWindow.baml
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\GeneratedInternalTypeHelper.g.cs
+D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\pisateli_tuvy.csprojResolveAssemblyReference.cache

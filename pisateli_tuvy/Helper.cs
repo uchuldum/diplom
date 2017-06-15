@@ -26,4 +26,3 @@ namespace pisateli_tuvy
         }
     }
 }
-

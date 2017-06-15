@@ -61,7 +61,7 @@ namespace pisateli_tuvy
         }
         public filewrite()
         {
-            
+
             WindowState = WindowState.Maximized;
             InitializeComponent();
             writers("");
@@ -88,7 +88,7 @@ namespace pisateli_tuvy
                 FolderCopy(path + "pisateli\\" + folder, trialdirectory + "\\pisateli\\" + folder, true);////Закинули папку с писателем
                 return trialdirectory;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message + "");
             }
@@ -98,13 +98,13 @@ namespace pisateli_tuvy
         {
             try
             {
-                con.ExecuteNonQueryPath("delete from chogaalchy where chog_id <> "+uid, path);  ////// Удаление остальных писателей
+                con.ExecuteNonQueryPath("delete from chogaalchy where chog_id <> " + uid, path);  ////// Удаление остальных писателей
                 con.ExecuteNonQueryPath("delete from chog_dug_azhyldar where chdugazh_uid <> " + uid, path); //// Удаление работ о писателе
                 con.ExecuteNonQueryPath("delete from nomnary where nomnary_uid <> " + uid, path); //// Удаление книг писателя
                 con.ExecuteNonQueryPath("delete from ochulgalary where ochulgalary_uid <> " + uid, path); //// Удаление переводов писателя
                 con.ExecuteNonQueryPath("delete from yry_apargan_shulukteri where yry_apsh_uid <> " + uid, path); //// Удаление стихотворений ставших песнями писателя
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex + "");
             }
@@ -125,10 +125,9 @@ namespace pisateli_tuvy
         public void writers(string txt)
         {
             a1.Children.Clear();//stackpanel где выводятся писатели
-            string name = autor.Text.Trim();
+            string name = txtLastName.Text.Trim();
             try
             {
-               
                 int count = con.ExecuteScalar("select count (*) from chogaalchy where chog_fam like '" + txt + "%'");
                 string[] all_id = con.Reader_Array("select chog_id from chogaalchy where chog_fam like '" + txt + "%'", count);
                 string[] all_img = con.Reader_Array("select chog_photo from chogaalchy where chog_fam like '" + txt + "%'", count);
@@ -140,38 +139,65 @@ namespace pisateli_tuvy
                 {
                     for (int i = 0; i < count; ++i)
                     {
-                        StackPanel stp = new StackPanel();
-                        stp.Width = 500;
-                        stp.Height = 100;
-                        stp.Orientation = Orientation.Horizontal;
-                        stp.Background = Brushes.LightBlue;
-                        stp.Margin = new Thickness(0, 20, 0, 0);
-                        Image img = new Image();
-                        if (File.Exists(path + "pisateli\\" + all_folder[i] + "\\" + all_img[i])) img.Source = con.GetImage("\\pisateli\\" + all_folder[i] + "\\" + all_img[i]);
-                        else img.Source = con.GetImage("\\all\\img\\default.png");
-                        stp.Children.Add(img);
-                        TextBlock text = new TextBlock();
-                        text.FontSize = 14;
-                        text.Text = all_fam[i] + " " + all_imya[i] + " " + all_otch[i];
-                        text.Tag = text.Text;
-                        stp.Children.Add(text);
-                        stp.Tag = all_id[i];
-                        a1.Children.Add(stp);
-                        stp.MouseEnter += (s, j) =>
+                        StackPanel stP = new StackPanel();
+                        ImageBrush img = new ImageBrush();
+                        TextBlock txtblk = new TextBlock();
+                        Border b1 = new Border();
+                        // b1.BorderBrush = Brushes.LightSteelBlue;
+                        b1.Background = Brushes.LightSteelBlue;
+                        b1.BorderThickness = new Thickness(1);
+                        b1.CornerRadius = new CornerRadius(15);
+                        b1.MaxWidth = 1024;
+                        b1.MinWidth = 800;
+                        b1.Height = 100;
+                        b1.Margin = new Thickness(0, 20, 0, 0);
+                        b1.Tag = all_id[i];
+                        Border b = new Border();
+                        b.BorderBrush = Brushes.White;
+                        b.BorderThickness = new Thickness(1);
+                        b.CornerRadius = new CornerRadius(15);
+                        b.Width = 100;
+                        b.Height = 100;
+                        if (File.Exists(path + "pisateli\\" + all_folder[i] + "\\" + all_img[i]))
+                            img.ImageSource = con.GetImage2(path + "pisateli\\" + all_folder[i] + "\\" + all_img[i]);
+                        else img.ImageSource = con.GetImage2(path + "\\all\\img\\default.png");
+
+                        b.Background = img;
+                        b.HorizontalAlignment = HorizontalAlignment.Right;
+
+
+                        txtblk.Text = all_fam[i] + " " + all_imya[i] + " " + all_otch[i];
+                        txtblk.VerticalAlignment = VerticalAlignment.Center;
+                        txtblk.Margin = new Thickness(5, 0, 0, 0);
+                        txtblk.FontFamily = new FontFamily("Arial");
+                        txtblk.FontSize = 16;
+
+                        stP.Orientation = Orientation.Horizontal;
+
+
+
+                        stP.Children.Add(b);
+                        stP.Children.Add(txtblk);
+                        b1.Child = stP;
+                        a1.Children.Add(b1);
+
+                        b1.MouseEnter += (s, j) =>
                         {
+                            BrushConverter bc = new BrushConverter();
+                            Brush brush = (Brush)bc.ConvertFrom("#94dbfc");
+                            brush.Freeze();
                             Mouse.OverrideCursor = Cursors.Hand;
-                            stp.Background = Brushes.Aqua;
+                            b1.Background = brush;
                         };
-                        stp.MouseLeave += (s, j) =>
+                        b1.MouseLeave += (s, j) =>
                         {
                             Mouse.OverrideCursor = Cursors.Arrow;
-                            stp.Background = Brushes.LightBlue;
+                            b1.Background = Brushes.LightSteelBlue;
                         };
-                        stp.MouseUp += (s, j) =>
+                        b1.MouseUp += (s, j) =>
                         {
-                            uid = Convert.ToInt32(stp.Tag);
-                            fio = text.Tag.ToString().Trim();
-                            string messageBoxText = "Вы точно хотите записать данные "+fio+" на носитель?";
+                            uid = Convert.ToInt32(b1.Tag);
+                            string messageBoxText = "Вы точно хотите записать данные " + txtblk.Text + " на носитель?";
                             string caption = "Запись писателя на носитель";
                             MessageBoxButton button = MessageBoxButton.YesNo;
                             MessageBoxImage icon = MessageBoxImage.Warning;
@@ -192,30 +218,30 @@ namespace pisateli_tuvy
                 }
                 else
                 {
-                    StackPanel stp = new StackPanel();
+                    BrushConverter bc = new BrushConverter();
+                    Brush brush = (Brush)bc.ConvertFrom("#94dbfc");
+                    brush.Freeze();
+                    Border b = new Border();
+                    b.CornerRadius = new CornerRadius(10);
+                    b.Width = 800;
+                    b.Height = 100;
                     TextBlock txb = new TextBlock();
+                    txb.HorizontalAlignment = HorizontalAlignment.Center;
+
                     txb.Text = "Авторов пока нет с такой фамилией";
-                    a1.Children.Add(stp);
-                    stp.Margin = new Thickness(0, 5, 0, 0);
-                    stp.Background = Brushes.LightSteelBlue;
-                    stp.Children.Add(txb);
+                    a1.Children.Add(b);
+                    b.Margin = new Thickness(0, 5, 0, 0);
+                    b.Background = brush;
+                    b.Child=txb;
                     txb.VerticalAlignment = VerticalAlignment.Center;
                     txb.FontFamily = new FontFamily("Arial");
-                    txb.FontSize = 16;
+                    txb.FontSize = 20;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex + "");
             }
-        }
-
-
-       
-        private void Find_Click(object sender, RoutedEventArgs e)
-        {
-            string fam = autor.Text.Trim();
-            writers(fam);
         }
         void CopyFile(string sourcefn, string destinfn)
         {
@@ -246,12 +272,12 @@ namespace pisateli_tuvy
                     }
                 /* if (File.Exists(progr)) Process.Start(progr, arg);
                  else MessageBox.Show("NOFILE");*/
-                MessageBox.Show(progr+"  "+arg);
+                MessageBox.Show(progr + "  " + arg);
             }
             if (Flash.IsChecked == true)
             {
                 ProgressManager pm = new ProgressManager();
-               
+
                 string path_nositel = ""; ////Путь КУДА БУДЕТ ЗАПИСАНА ПРОГРАММА
                 System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
                 System.Windows.Forms.DialogResult d_result = fbd.ShowDialog();
@@ -259,16 +285,21 @@ namespace pisateli_tuvy
                 {
                     path_nositel = fbd.SelectedPath;
                 }
-               /* pm.BeginWaiting();
-                pm.ChangeStatus("Loading...");
-                pm.SetProgressMaxValue(41);*/
+                /* pm.BeginWaiting();
+                 pm.ChangeStatus("Loading...");
+                 pm.SetProgressMaxValue(41);*/
                 //for(int i = 0;i<41;i++) pm.ChangeProgress(i);
                 FolderCopy(path_trial, path_nositel, true);
                 FolderDelete(path_trial);
-               // pm.EndWaiting();
+                // pm.EndWaiting();
 
             }
 
+        }
+        private void txtLastName_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            string surname = txtLastName.Text.Trim();
+            writers(surname);
         }
     }
 }

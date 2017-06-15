@@ -8,8 +8,11 @@
         Title="Административная панель" Height="733.52" Width="794.143">
     <ScrollViewer>
         <StackPanel VerticalAlignment="Top">
-            <Button Name="Back" Visibility="Collapsed" Click="Button_Click_4" Margin="0 5 0 0" Width="30" HorizontalAlignment="Left" Height="20" Content="Back">
-            </Button>
+            <Border Name="Back" Visibility="Collapsed" PreviewMouseUp="Button_Click_4" Margin="0 5 0 0" Width="40" HorizontalAlignment="Left" Height="40">
+                <Border.Background>
+                    <ImageBrush  ImageSource="Resources/back.png"/>
+                </Border.Background>
+            </Border>
             <StackPanel Margin="0 150 0 0" Orientation="Vertical" VerticalAlignment="Center" Visibility="Collapsed" Name="Password">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <TextBlock>Введите логин</TextBlock>
@@ -26,7 +29,7 @@
                     </Button>
                 </StackPanel>
             </StackPanel>
-            <StackPanel Name="adminPanel" Visibility="Visible">
+            <StackPanel Name="adminPanel" Visibility="Collapsed">
                 <StackPanel Name="Menu" Orientation="Vertical" Margin="20 100 0 0">
                     <StackPanel Width="600" Height="100" Orientation="Vertical">
                         <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" FontFamily="Comic Sans MS" Text="Выберите, пожалуйста, интересующий вас пункт меню :" Margin="27,0,26,0"/>
