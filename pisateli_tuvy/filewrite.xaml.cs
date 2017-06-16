@@ -267,12 +267,12 @@ namespace pisateli_tuvy
                     {
                         if (d.DriveType == DriveType.CDRom)
                         {
-                            arg = arg + (d.Name).Substring(0, 1) + " -b";
+                            arg = arg+" " + (d.Name).Substring(0, 1) + " -b";
                         }
                     }
-                /* if (File.Exists(progr)) Process.Start(progr, arg);
-                 else MessageBox.Show("NOFILE");*/
-                MessageBox.Show(progr + "  " + arg);
+                if (File.Exists(progr)) Process.Start(progr, arg);
+                 else MessageBox.Show("NOFILE");
+                //MessageBox.Show(progr + "  " + arg);
             }
             if (Flash.IsChecked == true)
             {

@@ -871,6 +871,7 @@ namespace pisateli_tuvy
         ////////WINDOW_Loaded
         public void main()
         {
+            image2.BorderBrush = new SolidColorBrush(Color.FromRgb(39, 79, 145));
             stack_distr.Visibility = Visibility.Hidden;
             this.pis_tuv.Visibility = Visibility.Hidden;
             this.pisatel.Visibility = Visibility.Hidden;
@@ -1390,6 +1391,9 @@ namespace pisateli_tuvy
             Border b = (Border)sender;
             b.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
             Mouse.OverrideCursor = Cursors.Arrow;
+            if (menu_lang == "tyv") { image2.BorderBrush = new SolidColorBrush(Color.FromRgb(39, 79, 145)); image3.BorderBrush = new SolidColorBrush(Color.FromRgb(255,255,255)); image4.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255)); }
+            else if (menu_lang == "rus") { image3.BorderBrush = new SolidColorBrush(Color.FromRgb(39, 79, 145)); image2.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255)); image4.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255)); }
+            else if (menu_lang == "eng") { image4.BorderBrush = new SolidColorBrush(Color.FromRgb(39, 79, 145)); image3.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255)); image2.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255)); }
         }
         private void image2_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
