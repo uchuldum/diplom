@@ -479,11 +479,14 @@ namespace pisateli_tuvy
                                     else
                                     {
                                         string input = message("Вы хотите добавить биографию писателя?", "Биография");
-                                        File.Copy(input, folder_path + "biographia.pdf");
-                                        MessageBox.Show("Биография добавлена");
-                                        TV.Visibility = Visibility.Collapsed;
-                                        webbrowser.Visibility = Visibility.Visible;
-                                        webbrowser.Navigate(folder_path + "biographia.pdf");///Вывод биографии писателя.
+                                        if (input == "Yes")
+                                        {
+                                            File.Copy(COPY(true), folder_path + "biographia.pdf");
+                                            MessageBox.Show("Биография добавлена");
+                                            TV.Visibility = Visibility.Collapsed;
+                                            webbrowser.Visibility = Visibility.Visible;
+                                            webbrowser.Navigate(folder_path + "biographia.pdf");///Вывод биографии писателя.
+                                        }
                                     }
                                     //MessageBox.Show(message("Вы хотите добавить биографию писателя", "Биография"));
 
@@ -507,12 +510,15 @@ namespace pisateli_tuvy
                                     }
                                     else
                                     {
-                                        string input = message("Вы хотите добавить писательскую работу для писателя?", "Биография");
-                                        File.Copy(input, folder_path + "pisatel_rab.pdf");
-                                        MessageBox.Show("Писательская работа добавлена");
-                                        TV.Visibility = Visibility.Collapsed;
-                                        webbrowser.Visibility = Visibility.Visible;
-                                        webbrowser.Navigate(folder_path + "pisatel_rab.pdf");///Вывод биографии писателя.
+                                        string input = message("Вы хотите добавить писательскую работу для писателя?", "Писательская работа");
+                                        if (input == "Yes")
+                                        {
+                                            File.Copy(COPY(true), folder_path + "pisatel_rab.pdf");
+                                            MessageBox.Show("Писательская работа добавлена");
+                                            TV.Visibility = Visibility.Collapsed;
+                                            webbrowser.Visibility = Visibility.Visible;
+                                            webbrowser.Navigate(folder_path + "pisatel_rab.pdf");///Вывод биографии писателя.
+                                        }
                                     }
                                 } break;
                          }
@@ -631,26 +637,21 @@ namespace pisateli_tuvy
         }
         public string message(string a ,string b)
         {
-            string s = "";
+            
             MessageBoxResult result = MessageBox.Show(a, b, MessageBoxButton.OKCancel, MessageBoxImage.Question);
             switch (result)
             {
                 case MessageBoxResult.OK:
                     {
-                        OpenFileDialog ofd = new OpenFileDialog();
-                        ofd.InitialDirectory = @"C:\";
-                        ofd.Filter = "Pdf Files|*.pdf";
-                        if (ofd.ShowDialog() == true)
-                        {
-                            s = ofd.FileName;
-                        }
+                        return "Yes";
                     }
                     break;
 
                 case MessageBoxResult.Cancel:
+                    return "No";
                     break;
             }
-            return s;
+            return "";
         }
         public string exist(string a)
         {
