@@ -208,6 +208,7 @@ namespace pisateli_tuvy
                                     {
                                         AUTORS.Visibility = Visibility.Collapsed;
                                         record.Visibility = Visibility.Visible;
+                                        Back.Visibility = Visibility.Visible;
                                     }
                                     break;
                                 case MessageBoxResult.No:
@@ -251,14 +252,15 @@ namespace pisateli_tuvy
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            string trialdirectory = path + "TRIALDIRS\\" + RandomString(10);
-            if (!Directory.Exists(trialdirectory)) Directory.CreateDirectory(trialdirectory);
-            if (!Directory.Exists(trialdirectory + "\\pisateli")) Directory.CreateDirectory(trialdirectory + "\\pisateli");
-            string path_trial = PreparationCopy(trialdirectory);
-            RemoveDataBase(path_trial + "\\pisateli.db");
+           
             /////ЗАПИСЬ НА КОМПАКТ ДИСК
             if (Disk.IsChecked == true)
             {
+                string trialdirectory = path + "TRIALDIRS\\" + RandomString(10);
+                if (!Directory.Exists(trialdirectory)) Directory.CreateDirectory(trialdirectory);
+                if (!Directory.Exists(trialdirectory + "\\pisateli")) Directory.CreateDirectory(trialdirectory + "\\pisateli");
+                string path_trial = PreparationCopy(trialdirectory);
+                RemoveDataBase(path_trial + "\\pisateli.db");
                 string progr = path + "BurnAware\\DataDisc.exe",
                            arg = "udf " + trialdirectory;
                 DriveInfo[] allDrives = DriveInfo.GetDrives();
@@ -271,11 +273,11 @@ namespace pisateli_tuvy
                         }
                     }
                 if (File.Exists(progr)) Process.Start(progr, arg);
-                 else MessageBox.Show("NOFILE");
-                //MessageBox.Show(progr + "  " + arg);
+                else MessageBox.Show("NOFILE");
             }
             if (Flash.IsChecked == true)
             {
+              
                 ProgressManager pm = new ProgressManager();
 
                 string path_nositel = ""; ////Путь КУДА БУДЕТ ЗАПИСАНА ПРОГРАММА
@@ -285,14 +287,16 @@ namespace pisateli_tuvy
                 {
                     path_nositel = fbd.SelectedPath;
                 }
-                /* pm.BeginWaiting();
-                 pm.ChangeStatus("Loading...");
-                 pm.SetProgressMaxValue(41);*/
-                //for(int i = 0;i<41;i++) pm.ChangeProgress(i);
-                FolderCopy(path_trial, path_nositel, true);
-                FolderDelete(path_trial);
-                // pm.EndWaiting();
-
+                if (path_nositel != "")
+                {
+                    string trialdirectory = path + "TRIALDIRS\\" + RandomString(10);
+                    if (!Directory.Exists(trialdirectory)) Directory.CreateDirectory(trialdirectory);
+                    if (!Directory.Exists(trialdirectory + "\\pisateli")) Directory.CreateDirectory(trialdirectory + "\\pisateli");
+                    string path_trial = PreparationCopy(trialdirectory);
+                    RemoveDataBase(path_trial + "\\pisateli.db");
+                    FolderCopy(path_trial, path_nositel, true);
+                    FolderDelete(path_trial);
+                }
             }
 
         }
@@ -300,6 +304,40 @@ namespace pisateli_tuvy
         {
             string surname = txtLastName.Text.Trim();
             writers(surname);
+        }
+
+        private void Back_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            AUTORS.Visibility = Visibility.Visible;
+            record.Visibility = Visibility.Collapsed;
+            Back.Visibility = Visibility.Collapsed;
+        }
+        private void but_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Border b = (Border)sender;
+            b.Background = new SolidColorBrush(Color.FromRgb(39, 79, 145));
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+
+        private void but_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Border b = (Border)sender;
+            b.Background = new SolidColorBrush(Color.FromRgb(0, 150, 211));
+            Mouse.OverrideCursor = Cursors.Arrow;
+        }
+
+        private void Disk_Checked(object sender, RoutedEventArgs e)
+        {
+            Flash.IsChecked = false;
+            r2.Background = new SolidColorBrush(Color.FromRgb(0, 150, 211));
+            r1.Background = Brushes.White;
+        }
+
+        private void Flash_Checked(object sender, RoutedEventArgs e)
+        {
+            Disk.IsChecked = false;
+            r1.Background = new SolidColorBrush(Color.FromRgb(0, 150, 211));
+            r2.Background = Brushes.White;
         }
     }
 }

@@ -8,7 +8,14 @@
         mc:Ignorable="d"
         Title="Писатели Тувы"   FontFamily="Gulim" Loaded="Window_Loaded" x:Name="main_window" d:DesignWidth="2108.187" d:DesignHeight="1376.121" >
         <Window.Resources>
-            <SolidColorBrush x:Key="brushWatermarkBackground" Color="White" />
+        <ControlTemplate x:Key="TextBoxBaseControlTemplate" TargetType="{x:Type TextBoxBase}">
+            <Border Background="{TemplateBinding Background}" 
+                x:Name="Bd" BorderBrush="#a09f9d"
+                BorderThickness="1" CornerRadius="5">
+                <ScrollViewer x:Name="PART_ContentHost"/>
+            </Border>
+        </ControlTemplate>
+        <SolidColorBrush x:Key="brushWatermarkBackground" Color="White" />
             <SolidColorBrush x:Key="brushWatermarkBorder" Color="Indigo" />
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <shema:Helper x:Key="Helper"/>
@@ -58,9 +65,7 @@
             <StackPanel Name="Content" Height="1170" HorizontalAlignment="Center" Width="1200">
                 <StackPanel Name="main_tuv" Orientation="Vertical" HorizontalAlignment="Center" Visibility="Collapsed">
                     <RichTextBox IsReadOnly="True" Height="202"  HorizontalAlignment="Left" x:Name="richTextBox1" Width="auto" Opacity="1" Visibility="Visible"  BorderThickness="0"/>
-                   <!-- <TreeView BorderThickness="0" Height="auto" HorizontalAlignment="Left" x:Name="tw2" VerticalAlignment="Top" Width="auto" Background="White" FontFamily="Comic Sans MS" FontSize="14" FontWeight="Bold" Foreground="Black" />-->
                     <Canvas Height="630" Name="Map">
-                       <!--<TextBlock Name="text" FontFamily="Arial" FontSize="14" ></TextBlock>-->
                     </Canvas>
                     <RichTextBox IsReadOnly="True" Height="380" HorizontalAlignment="Left" x:Name="richTextBox2" Opacity="1" Visibility="Visible" Width="auto" BorderThickness="0"/>
                 </StackPanel>
@@ -88,9 +93,9 @@
                                 </MultiBinding>
                             </TextBlock.Visibility>
                         </TextBlock>
-                        <TextBox VerticalContentAlignment="Center"  FontSize="18" FontFamily="Arial" Name="txtLastName" Background="Transparent" Width="740" MaxLength="50" Height="30"  PreviewKeyUp="txtLastName_PreviewKeyUp"  />
+                            <TextBox Template="{StaticResource TextBoxBaseControlTemplate}" VerticalContentAlignment="Center"  FontSize="18" FontFamily="Arial" Name="txtLastName" Background="Transparent" Width="660" MaxLength="50" Height="30"  PreviewKeyUp="txtLastName_PreviewKeyUp"  />
                         </Grid>
-                        <ComboBox Margin="20" IsEditable="True" IsReadOnly="True" Text="Кожуун" Height="27" HorizontalAlignment="Left" x:Name="comboBox1" VerticalAlignment="Top" Width="127" FontFamily="Arial">
+                        <ComboBox  FontFamily="Arial" FontSize="18" VerticalContentAlignment="Center" Margin="20" IsEditable="True" IsReadOnly="True" Text="Кожуун" Height="27" HorizontalAlignment="Left" x:Name="comboBox1" VerticalAlignment="Top" Width="230">
                             <ComboBoxItem Content="Кожуун" x:Name="distr0" />
                             <ComboBoxItem Content="Тожу кожуун" x:Name="distr1" />
                             <ComboBoxItem Content="Каа-Хем кожуун" x:Name="distr2" />
@@ -111,7 +116,9 @@
                             <ComboBoxItem Content="Бай-Тайга кожуун" x:Name="distr17" />
                             <ComboBoxItem Content="Мөңгүн-Тайга кожуун" x:Name="distr18" />
                         </ComboBox>
-                        <Button  Content="Дилээр" Height="27" x:Name="search" VerticalAlignment="Center" Width="111" FontFamily="Arial" Click="search_Click" />
+                        <Border  PreviewMouseUp="search_Click"  MouseEnter="but_MouseEnter" MouseLeave="but_MouseLeave" Width="80" Height="30" CornerRadius="5" Background="#efeeed" BorderBrush="#a09f9d" BorderThickness="1" HorizontalAlignment="Center" >
+                            <TextBlock x:Name="search" FontSize="18" Foreground="Black" Text="Дилээр" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </Border>
                     </StackPanel>
                     <StackPanel x:Name="writers2" Orientation="Vertical" />
                 </StackPanel>

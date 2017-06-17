@@ -64,12 +64,10 @@ D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\pisateli_tuvy.pdb
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\pisateli_tuvy.exe
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\pisateli_tuvy.pdb
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\EntityFramework.dll
-D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\EntityFramework.SqlServer.dll
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\System.Data.SQLite.dll
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\System.Data.SQLite.EF6.dll
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\System.Data.SQLite.Linq.dll
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\EntityFramework.xml
-D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\EntityFramework.SqlServer.xml
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\System.Data.SQLite.xml
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\filewrite.g.cs
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\MainWindow.g.cs
@@ -87,3 +85,4 @@ D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\ProgressWindow.g.cs
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\ProgressWindow.baml
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\GeneratedInternalTypeHelper.g.cs
 D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\obj\Debug\pisateli_tuvy.csprojResolveAssemblyReference.cache
+D:\diplom\pisateli_tuvy_v.1.0.1\pisateli_tuvy\bin\Debug\System.Runtime.InteropServices.RuntimeInformation.dll

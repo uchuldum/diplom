@@ -1402,7 +1402,7 @@ namespace pisateli_tuvy
             Record.Text = "Шыгжамырче киир бижидер";
             Admin.Text = "Кирери";
             label1.Content = "Чогаалчылар";
-            search.Content = "Дилээр";
+            search.Text = "Дилээр";
             SearchTxb.Text = "Чогаалчыны эгеки ады-биле дилээр";
             menu_lang = "tyv";
             menu();
@@ -1419,7 +1419,7 @@ namespace pisateli_tuvy
             Record.Text = "Запись на носитель";
             Admin.Text = "Вход";
             label1.Content = "Писатели";
-            search.Content = "Поиск";
+            search.Text = "Поиск";
             SearchTxb.Text = "Поиск по фамилии писателя";
             menu_lang = "rus";
             menu();
@@ -1434,7 +1434,7 @@ namespace pisateli_tuvy
             Record.Text = "Recording medium";
             Admin.Text = "Log in";
             label1.Content = "Writers";
-            search.Content = "Search";
+            search.Text = "Search";
             SearchTxb.Text = "Search by writer's surname";
             menu_lang = "eng";
             menu();
@@ -1443,17 +1443,39 @@ namespace pisateli_tuvy
         }
         private void button5_Click(object sender, RoutedEventArgs e)
         {
-            //Admin_Stack.Visibility = Visibility.Visible;
-            pass p = new pass();
-            p.Show();
+           
+            if (!Helper.IsWindowOpen<pass>())
+            {
+                pass p = new pass();
+                p.Show();
+            }
+            
         }
-
         private void button4_Click(object sender, RoutedEventArgs e)
         {
-            filewrite fw = new filewrite();
-            fw.Show();
+            
+            if (!Helper.IsWindowOpen<filewrite>())
+            {
+                filewrite fw = new filewrite();
+                fw.Show();
+            }
+            else
+            {
+                
+            }
         }
-
+        private void but_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Border b = (Border)sender;
+            b.Background = new SolidColorBrush(Color.FromRgb(160, 159, 157));
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+        private void but_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Border b = (Border)sender;
+            b.Background = new SolidColorBrush(Color.FromRgb(239, 238, 237));
+            Mouse.OverrideCursor = Cursors.Arrow;
+        }
         private void txtLastName_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             string familiya = txtLastName.Text.Trim();

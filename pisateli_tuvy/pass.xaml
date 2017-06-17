@@ -5,7 +5,32 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:pisateli_tuvy"
         mc:Ignorable="d"
-        Title="Административная панель" Height="733.52" Width="794.143">
+        Title="Административная панель" Height="500" Width="600">
+    <Window.Resources>
+        <ControlTemplate x:Key="TextBoxBaseControlTemplate" TargetType="{x:Type TextBoxBase}">
+            <Border Background="{TemplateBinding Background}" 
+                x:Name="Bd" BorderBrush="#FF0096D3"
+                BorderThickness="2" CornerRadius="5">
+                <ScrollViewer x:Name="PART_ContentHost"/>
+            </Border>
+        </ControlTemplate>
+        <ControlTemplate x:Key="passwordbox" TargetType="{x:Type PasswordBox}">
+            <Border Background="{TemplateBinding Background}" 
+                x:Name="Bd" BorderBrush="#FF0096D3"
+                BorderThickness="2" CornerRadius="5">
+                <ScrollViewer Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+            </Border>
+        </ControlTemplate>
+        <SolidColorBrush x:Key="brushWatermarkBackground" Color="White" />
+        <SolidColorBrush x:Key="brushWatermarkBorder" Color="Indigo" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <local:Helper x:Key="Helper"/>
+        <Style x:Key="EntryFieldStyle" TargetType="Grid" >
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="20,0" />
+        </Style>
+    </Window.Resources>
     <ScrollViewer>
         <StackPanel VerticalAlignment="Top">
             <Border Name="Back" Visibility="Collapsed" PreviewMouseUp="Button_Click_4" Margin="0 5 0 0" Width="40" HorizontalAlignment="Left" Height="40">
@@ -13,21 +38,26 @@
                     <ImageBrush  ImageSource="Resources/back.png"/>
                 </Border.Background>
             </Border>
-            <StackPanel Margin="0 150 0 0" Orientation="Vertical" VerticalAlignment="Center" Visibility="Collapsed" Name="Password">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock>Введите логин</TextBlock>
-                    <TextBox Name="login"  Width="100" Margin="18,0,0,10" ></TextBox>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <TextBlock>Введите пароль</TextBlock>
-                    <PasswordBox Name="password" Width="100" Margin="10,0,0,10" Password=""></PasswordBox>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Height="20" HorizontalAlignment="Center">
-                    <Button Content="Вход" Margin="0,0,10,0" Name="ok" Width="50" Click="ok_Click">
-                    </Button>
-                    <Button Content="Выход" Name="no" Width="50" Click="no_Click" >
-                    </Button>
-                </StackPanel>
+            <StackPanel Orientation="Vertical" VerticalAlignment="Top" Visibility="Collapsed" Name="Password">
+                <TextBlock Margin="0 10 0 0" FontFamily="Arial" FontSize="27" Text="Вход в административную панель" HorizontalAlignment="Center"/>
+                <Border Margin="0 20 0 0" Width="470" Height="350" BorderBrush="#FF0096D3" BorderThickness="1" CornerRadius="10">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"  Orientation="Vertical">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Логин" FontFamily="Arial" FontSize="20"/>
+                            <TextBox Margin="0,0" VerticalContentAlignment="Center" TextAlignment="Justify" Template="{StaticResource TextBoxBaseControlTemplate}"  FontSize="23" FontFamily="Arial" Name="login" Background="Transparent" Width="360" Height="40"/>
+                            <TextBlock Margin="0 10 0 0" Text="Пароль" FontFamily="Arial" FontSize="20"/>
+                            <PasswordBox Template="{StaticResource passwordbox}"  Margin="0,5" VerticalContentAlignment="Center" FontSize="23" FontFamily="Arial" Name="password" Background="Transparent" Width="360" Height="40"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Border Margin="0 30 0 0" PreviewMouseUp="ok_Click" MouseEnter="but_MouseEnter" MouseLeave="but_MouseLeave" Width="100" Height="60" CornerRadius="5" Background="#FF0096D3" BorderBrush="Black" BorderThickness="3">
+                                <TextBlock Foreground="White" TextWrapping="Wrap" FontFamily="Arial" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Вход"/>
+                            </Border>
+                            <Border Margin="20 30 0 0" PreviewMouseUp="no_Click" MouseEnter="but_MouseEnter" MouseLeave="but_MouseLeave" Width="100" Height="60" CornerRadius="5" Background="#FF0096D3" BorderBrush="Black" BorderThickness="3">
+                                <TextBlock Foreground="White" TextWrapping="Wrap" FontFamily="Arial" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Выход"/>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
             </StackPanel>
             <StackPanel Name="adminPanel" Visibility="Collapsed">
                 <StackPanel Name="Menu" Orientation="Vertical" Margin="20 100 0 0">
@@ -49,298 +79,374 @@
                             <TextBlock FontSize="18" Text="Удалить писателя из базы данных"/>
                         </StackPanel>
                     </Border>
+                    <Border MouseLeave="Delete_MouseLeave" Name="Pass_Change" PreviewMouseUp="Pass_ChangePreviewMouseUp" MouseEnter="Border_MouseEnter" CornerRadius="10 10 10 10" BorderBrush="Gray" BorderThickness="1" Margin="0 20 0 0" Width="400" Height="60" >
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextBlock FontSize="18" Text="Сменить пароль"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </StackPanel>
             <StackPanel Margin="20 20 0 0" Name="addWR" Orientation="Vertical" Visibility="Collapsed">
-                <StackPanel Orientation="Horizontal">
-                    <StackPanel>
-                        <Image Name="add_img_pis" Width="100" Height="100">
-                            
-                        </Image>
-                        <Button Click="Button_Click_10" Margin="0 5 0 0" Content="Выбрать фото">
-                            
-                        </Button>
-                    </StackPanel>
-                    <StackPanel>
+                <Border Margin="0 20 0 0" Width="1200" HorizontalAlignment="Center" BorderBrush="#FF0096D3" BorderThickness="1" CornerRadius="10">
+                    <StackPanel HorizontalAlignment="Center">
+                        <TextBlock Text="Добавление нового писателя писателя" FontFamily="Arial" FontSize="30" HorizontalAlignment="Center"/>
                         <StackPanel Orientation="Horizontal">
-                            <Label>Введите фамилию</Label>
-                            <TextBox Margin="5 0 0 0" Width="100" Name="Surname"></TextBox>
+                            <Border Margin="0 10" BorderBrush="#FF0096D3" BorderThickness="1" CornerRadius="10">
+                                <StackPanel>
+                                    <Border Width="140" Height="140" CornerRadius="15">
+                                        <Border.Background>
+                                            <ImageBrush x:Name="add_img_pis"></ImageBrush>
+                                        </Border.Background>
+                                    </Border>
+                                    <Border MouseEnter="but_MouseEnter" MouseLeave="but_MouseLeave" Width="200" Height="20" CornerRadius="3" Background="#FF0096D3" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" PreviewMouseUp="Button_Click_10" Margin="0 5 0 5">
+                                        <TextBlock FontSize="14" TextWrapping="Wrap" Foreground="White" Text="Загрузить новое изображение" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                            <Border Margin="20 10 0 10" Width="800" BorderBrush="#FF0096D3" BorderThickness="1" CornerRadius="10">
+                                <StackPanel Orientation="Horizontal">
+                                   <StackPanel Orientation="Vertical" Margin="25 20">
+                                            <StackPanel Orientation="Horizontal">
+                                                 <Label FontFamily="Arial" FontSize="18">Введите фамилию</Label>
+                                                 <TextBox FontFamily="Arial" FontSize="16" VerticalContentAlignment="Center" Margin="5 0 0 0" Width="150" Name="Surname"></TextBox>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal" Margin="0 15 0 0">
+                                                 <Label FontFamily="Arial" FontSize="18">Введите имя</Label>
+                                                 <TextBox FontFamily="Arial" FontSize="16" VerticalContentAlignment="Center" Width="150" Name="Name" Margin="53 0 0 0"></TextBox>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal" Margin="0 15 0 0">
+                                                <Label FontFamily="Arial" FontSize="18">Введите отчество</Label>
+                                                <TextBox FontFamily="Arial" FontSize="16" VerticalContentAlignment="Center" Width="150" Name="Patronymic" Margin="12 0 0 0"></TextBox>
+                                            </StackPanel>
+                                    </StackPanel>
+                                    <StackPanel Margin="10 20">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label FontFamily="Arial" FontSize="18">Выберите дату рождения</Label>
+                                            <DatePicker  FontFamily="Arial" FontSize="16" Margin="13 0 0 0" Width="150" Name="Born" SelectedDate="01.01.2000" ></DatePicker>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0 15 0 0">
+                                            <Label FontFamily="Arial" FontSize="18">Выберите дату смерти</Label>
+                                            <DatePicker  FontFamily="Arial" FontSize="16" SelectedDate="01.01.2000" Margin="36 0 0 0" Width="150" Name="Death"></DatePicker>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0 15 0 0">
+                                            <Label FontFamily="Arial" FontSize="18">Выберите кожуун писателя</Label>
+                                            <ComboBox FontFamily="Arial" FontSize="16" Name="Koj" MinWidth="150" Text="Кожуун" MaxWidth="200">
+                                                <ComboBoxItem Content="Тожу кожуун"  Tag="1"/>
+                                                <ComboBoxItem Content="Каа-Хем кожуун"  Tag="2"/>
+                                                <ComboBoxItem Content="Тере-Хөл кожуун"  Tag="3"/>
+                                                <ComboBoxItem Content="Эрзин кожуун"  Tag="4"/>
+                                                <ComboBoxItem Content="Тес-Хем кожуун"  Tag="5" />
+                                                <ComboBoxItem Content="Таңды кожуун" Tag="6"/>
+                                                <ComboBoxItem Content="Кызыл кожуун"  Tag="7"/>
+                                                <ComboBoxItem Content="Кызыл хоорай"  Tag="8"/>
+                                                <ComboBoxItem Content="Пии-Хем кожуун" Tag="9" />
+                                                <ComboBoxItem Content="Чеди-Хөл кожуун"  Tag="10" />
+                                                <ComboBoxItem Content="Улуг-Хем кожуун" Tag="11" />
+                                                <ComboBoxItem Content="Чаа-Хөл кожуун"  Tag="12"/>
+                                                <ComboBoxItem Content="Өвүр кожуун"  Tag="13"/>
+                                                <ComboBoxItem Content="Чөөн-Хемчик кожуун"  Tag="14" />
+                                                <ComboBoxItem Content="Сүт-Хөл кожуун" Tag="15" />
+                                                <ComboBoxItem Content="Баруум-Хемчик кожуун"  Tag="16" />
+                                                <ComboBoxItem Content="Бай-Тайга кожуун" Tag="17" />
+                                                <ComboBoxItem Content="Мөңгүн-Тайга кожуун" Tag="18"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0 15 0 0">
-                            <Label>Введите имя</Label>
-                            <TextBox Width="100" Name="Name" Margin="35 0 0 0"></TextBox>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0 15 0 0">
-                            <Label>Введите отчество</Label>
-                            <TextBox Width="100" Name="Patronymic" Margin="9 0 0 0"></TextBox>
-                        </StackPanel>
+                        <Border MouseEnter="but_MouseEnter" MouseLeave="but_MouseLeave" Width="130" Height="60" CornerRadius="5" Background="#FF0096D3" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" PreviewMouseUp="Button_Click" Margin="0 5 0 5">
+                            <TextBlock FontSize="18" Foreground="White" Text="Добавить" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        </Border>
                     </StackPanel>
-                    <StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label>Выберите дату рождения</Label>
-                            <DatePicker Margin="10 0 0 0" Width="150" Name="Born" SelectedDate="01.01.2000" ></DatePicker>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0 15 0 0">
-                            <Label>Выберите дату смерти</Label>
-                            <DatePicker SelectedDate="01.01.2000" Margin="28 0 0 0" Width="150" Name="Death"></DatePicker>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0 15 0 0">
-                            <Label>Выберите кожуун писателя</Label>
-                            <ComboBox Name="Koj" MinWidth="150" Text="Кожуун" MaxWidth="200">
-                                <ComboBoxItem Content="Тожу кожуун"  Tag="1"/>
-                                <ComboBoxItem Content="Каа-Хем кожуун"  Tag="2"/>
-                                <ComboBoxItem Content="Тере-Хөл кожуун"  Tag="3"/>
-                                <ComboBoxItem Content="Эрзин кожуун"  Tag="4"/>
-                                <ComboBoxItem Content="Тес-Хем кожуун"  Tag="5" />
-                                <ComboBoxItem Content="Таңды кожуун" Tag="6"/>
-                                <ComboBoxItem Content="Кызыл кожуун"  Tag="7"/>
-                                <ComboBoxItem Content="Кызыл хоорай"  Tag="8"/>
-                                <ComboBoxItem Content="Пии-Хем кожуун" Tag="9" />
-                                <ComboBoxItem Content="Чеди-Хөл кожуун"  Tag="10" />
-                                <ComboBoxItem Content="Улуг-Хем кожуун" Tag="11" />
-                                <ComboBoxItem Content="Чаа-Хөл кожуун"  Tag="12"/>
-                                <ComboBoxItem Content="Өвүр кожуун"  Tag="13"/>
-                                <ComboBoxItem Content="Чөөн-Хемчик кожуун"  Tag="14" />
-                                <ComboBoxItem Content="Сүт-Хөл кожуун" Tag="15" />
-                                <ComboBoxItem Content="Баруум-Хемчик кожуун"  Tag="16" />
-                                <ComboBoxItem Content="Бай-Тайга кожуун" Tag="17" />
-                                <ComboBoxItem Content="Мөңгүн-Тайга кожуун" Tag="18"/>
-                            </ComboBox>
-                        </StackPanel>
-                    </StackPanel>
-                </StackPanel>
-                <Button Width="100" Content="Добавить" Margin="0 5 0 0" HorizontalAlignment="Left" Click="Button_Click"></Button>
+                </Border>
             </StackPanel>
             <StackPanel  Margin="20 20 0 0" Name="searchWR" Orientation="Vertical" Visibility="Collapsed">
-               
+
             </StackPanel>
             <StackPanel Name="editWR" Visibility="Collapsed" Orientation="Vertical">
                 <StackPanel Name="Image_Name" >
-                    <StackPanel Name="Fio" Orientation="Horizontal">
-                        <Label>Фамилия</Label>
-                        <TextBox Name="FAM" MinWidth="150" MaxWidth="200"></TextBox>
-                        <Label>Имя</Label>
-                        <TextBox Name="Imya" MinWidth="150" MaxWidth="200"></TextBox>
-                        <Label>Отчество</Label>
-                        <TextBox Name="Otch" MinWidth="150" MaxWidth="200"></TextBox>
-                    </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <Label>Дата рождения</Label>
-                        <TextBox Name="Data_rojd" MinWidth="150" MaxWidth="200"></TextBox>
-                        <Label>Дата смерти</Label>
-                        <TextBox Name="Data_Smerti" MinWidth="150" MaxWidth="200"></TextBox>
-                        <Label>Кожуун</Label>
-                        <ComboBox Name="Kojuun" MinWidth="150" MaxWidth="200">
-                            <ComboBoxItem Content="Тожу кожуун" x:Name="distr1" Tag="1"/>
-                            <ComboBoxItem Content="Каа-Хем кожуун" x:Name="distr2" Tag="2"/>
-                            <ComboBoxItem Content="Тере-Хөл кожуун" x:Name="distr3" Tag="3"/>
-                            <ComboBoxItem Content="Эрзин кожуун" x:Name="distr4" Tag="4"/>
-                            <ComboBoxItem Content="Тес-Хем кожуун" x:Name="distr5" Tag="5" />
-                            <ComboBoxItem Content="Таңды кожуун" x:Name="distr6" Tag="6"/>
-                            <ComboBoxItem Content="Кызыл кожуун" x:Name="distr7" Tag="7"/>
-                            <ComboBoxItem Content="Кызыл хоорай" x:Name="distr8" Tag="8"/>
-                            <ComboBoxItem Content="Пии-Хем кожуун" x:Name="distr9" Tag="9" />
-                            <ComboBoxItem Content="Чеди-Хөл кожуун" x:Name="distr10" Tag="10" />
-                            <ComboBoxItem Content="Улуг-Хем кожуун" x:Name="distr11" Tag="11" />
-                            <ComboBoxItem Content="Чаа-Хөл кожуун" x:Name="distr12" Tag="12"/>
-                            <ComboBoxItem Content="Өвүр кожуун" x:Name="distr13" Tag="13"/>
-                            <ComboBoxItem Content="Чөөн-Хемчик кожуун" x:Name="distr14" Tag="14" />
-                            <ComboBoxItem Content="Сүт-Хөл кожуун" x:Name="distr15" Tag="15" />
-                            <ComboBoxItem Content="Баруум-Хемчик кожуун" x:Name="distr16" Tag="16" />
-                            <ComboBoxItem Content="Бай-Тайга кожуун" x:Name="distr17" Tag="17" />
-                            <ComboBoxItem Content="Мөңгүн-Тайга кожуун" x:Name="distr18"  Tag="18"/>
-                        </ComboBox>
-                    </StackPanel>
-                    <Button HorizontalAlignment="Left" Click="Button_Click_9" Margin="0 5 0 5" Height="20" Content="Редактировать" Width="100"></Button>
-                    <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
-                        <Border Width="100" Height="100" CornerRadius="15">
-                            <Border.Background>
-                                <ImageBrush x:Name="Wr_Image"></ImageBrush>
-                            </Border.Background>
-                        </Border>
-                        <Button Click="Button_Click_8" Margin="10 0 0 0" Width="auto" Height="20" Content="Загрузить новое изображение"></Button>
-                    </StackPanel>
-                    
+                    <TextBlock Text="Редактирование писателя" FontFamily="Arial" FontSize="30" HorizontalAlignment="Center"/>
+                    <Border Margin="0 20 0 0" Width="1200" HorizontalAlignment="Center" BorderBrush="#FF0096D3" BorderThickness="1" CornerRadius="10">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Данные писателя" FontFamily="Arial" FontSize="30" HorizontalAlignment="Center"/>
+                            <StackPanel Margin="0 10 0 0" Orientation="Horizontal" HorizontalAlignment="Center">
+                                <Border Margin="0 10" BorderBrush="#FF0096D3" BorderThickness="1" CornerRadius="10">
+                                    <StackPanel Margin="5 5" VerticalAlignment="Center" Orientation="Vertical">
+                                        <Border Width="140" Height="140" CornerRadius="15">
+                                            <Border.Background>
+                                                <ImageBrush x:Name="Wr_Image"></ImageBrush>
+                                            </Border.Background>
+                                        </Border>
+                                        <Border MouseEnter="but_MouseEnter" MouseLeave="but_MouseLeave" Width="200" Height="20" CornerRadius="3" Background="#FF0096D3" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" PreviewMouseUp="Button_Click_8" Margin="0 5 0 5">
+                                            <TextBlock FontSize="14" TextWrapping="Wrap" Foreground="White" Text="Загрузить новое изображение" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                                <Border Margin="20 10 0 10" Width="800" BorderBrush="#FF0096D3" BorderThickness="1" CornerRadius="10">
+                                    <StackPanel>
+                                        <StackPanel Width="790" Name="Fio" Orientation="Horizontal" Margin="0 10 0 0" HorizontalAlignment="Center">
+                                            <Label FontFamily="Arial" FontSize="18" >Фамилия</Label>
+                                            <TextBox FontFamily="Arial" FontSize="16" VerticalContentAlignment="Center" Name="FAM" MinWidth="150" MaxWidth="200" Margin="51 0 0 0"></TextBox>
+                                            <Label  FontFamily="Arial" FontSize="18">Имя</Label>
+                                            <TextBox FontFamily="Arial" FontSize="16" VerticalContentAlignment="Center" Name="Imya" MinWidth="150" MaxWidth="200" Margin="69 0 0 0"></TextBox>
+                                            <Label FontFamily="Arial" FontSize="18">Отчество</Label>
+                                            <TextBox FontFamily="Arial" FontSize="16" VerticalContentAlignment="Center" Name="Otch" MinWidth="150" MaxWidth="200"></TextBox>
+                                        </StackPanel>
+                                        <StackPanel Width="790" Orientation="Horizontal" Margin="0 10" HorizontalAlignment="Center">
+                                            <Label FontFamily="Arial" FontSize="18">Дата рождения</Label>
+                                            <TextBox FontFamily="Arial" FontSize="16" VerticalContentAlignment="Center" Name="Data_rojd" MinWidth="150" MaxWidth="200"></TextBox>
+                                            <Label FontFamily="Arial" FontSize="18">Дата смерти</Label>
+                                            <TextBox FontFamily="Arial" FontSize="16" VerticalContentAlignment="Center" Name="Data_Smerti" MinWidth="150" MaxWidth="200"></TextBox>
+                                            <Label FontFamily="Arial" FontSize="18">Кожуун</Label>
+                                            <ComboBox Name="Kojuun" Margin="20 0 0 0" MinWidth="150" MaxWidth="200">
+                                                <ComboBoxItem Content="Тожу кожуун" x:Name="distr1" Tag="1"/>
+                                                <ComboBoxItem Content="Каа-Хем кожуун" x:Name="distr2" Tag="2"/>
+                                                <ComboBoxItem Content="Тере-Хөл кожуун" x:Name="distr3" Tag="3"/>
+                                                <ComboBoxItem Content="Эрзин кожуун" x:Name="distr4" Tag="4"/>
+                                                <ComboBoxItem Content="Тес-Хем кожуун" x:Name="distr5" Tag="5" />
+                                                <ComboBoxItem Content="Таңды кожуун" x:Name="distr6" Tag="6"/>
+                                                <ComboBoxItem Content="Кызыл кожуун" x:Name="distr7" Tag="7"/>
+                                                <ComboBoxItem Content="Кызыл хоорай" x:Name="distr8" Tag="8"/>
+                                                <ComboBoxItem Content="Пии-Хем кожуун" x:Name="distr9" Tag="9" />
+                                                <ComboBoxItem Content="Чеди-Хөл кожуун" x:Name="distr10" Tag="10" />
+                                                <ComboBoxItem Content="Улуг-Хем кожуун" x:Name="distr11" Tag="11" />
+                                                <ComboBoxItem Content="Чаа-Хөл кожуун" x:Name="distr12" Tag="12"/>
+                                                <ComboBoxItem Content="Өвүр кожуун" x:Name="distr13" Tag="13"/>
+                                                <ComboBoxItem Content="Чөөн-Хемчик кожуун" x:Name="distr14" Tag="14" />
+                                                <ComboBoxItem Content="Сүт-Хөл кожуун" x:Name="distr15" Tag="15" />
+                                                <ComboBoxItem Content="Баруум-Хемчик кожуун" x:Name="distr16" Tag="16" />
+                                                <ComboBoxItem Content="Бай-Тайга кожуун" x:Name="distr17" Tag="17" />
+                                                <ComboBoxItem Content="Мөңгүн-Тайга кожуун" x:Name="distr18"  Tag="18"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                        <Border MouseEnter="but_MouseEnter" MouseLeave="but_MouseLeave" Width="130" Height="60" CornerRadius="5" Background="#FF0096D3" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" PreviewMouseUp="Button_Click_9" Margin="0 5 0 5">
+                                            <TextBlock FontSize="18" Foreground="White" Text="Редактировать" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                        </Border>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
-                <StackPanel Margin="10 10 0 0" Name="editMenu" Orientation="Horizontal">
-                    <Button Click="Button_Click_1" Width="150" Content="Добавление материла"></Button>
-                    <Button Click="Button_Click_2" Width="150" Content="Удаление материла" Margin="10 0 10 0"></Button>
-                </StackPanel>
-                <StackPanel Name="DeleteMater" HorizontalAlignment="Left" Visibility="Collapsed" Orientation="Horizontal">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Name="MaterText" Text=""></TextBlock>
-                        <TreeView  BorderThickness="0" Name="MaterTV">
-                            <TreeViewItem Tag="1" Header="Биография писателя">
-                            </TreeViewItem>
-                            <TreeViewItem Tag="2" Header="Писательская работа">
-                            </TreeViewItem>
-                            <TreeViewItem Tag="3" Header="Выпущенные книги">
-                                <StackPanel Name="yndyrgen_nomnary" Visibility="Collapsed">
-                                    <Label HorizontalAlignment="Center" FontSize="16" FontWeight="Bold">Добавление новой книги</Label>
-                                    <StackPanel Name="Books"  Orientation="Vertical">
-                                        <StackPanel Orientation="Horizontal">
-                                            <Label>Введите название книги</Label>
-                                            <TextBox Name="Book_Name" Margin="5 0 0 0" Width="250"></TextBox>
+                <Border  Margin="0 20 0 0" Width="1200" HorizontalAlignment="Center" BorderBrush="#FF0096D3" BorderThickness="1" CornerRadius="10">
+                    <StackPanel Margin="0 5" Name="editMenu" Width="1200" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="Материалы писателя" FontFamily="Arial" FontSize="30" HorizontalAlignment="Center"/>
+                        <Grid Width="500" Margin="0 10 0 0">
+                            <Border Name="dobav_mater" MouseEnter="but_MouseEnter1" MouseLeave="but_MouseLeave1" Width="200" Height="50" CornerRadius="5" Background="#FF0096D3" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" PreviewMouseUp="Button_Click_1" >
+                                <TextBlock FontSize="18" Foreground="White" Text="Добавление материала" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            </Border>
+                            <Border Name="udal_mater" MouseEnter="but_MouseEnter1" MouseLeave="but_MouseLeave1" Width="200" Height="50" CornerRadius="5" Background="#FF0096D3" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Right" PreviewMouseUp="Button_Click_2" >
+                                <TextBlock FontSize="18" Foreground="White" Text="Удаление материала" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                            </Border>
+                        </Grid>
+                        <StackPanel Name="DeleteMater" HorizontalAlignment="Left" Visibility="Collapsed" Orientation="Horizontal">
+                            <StackPanel Orientation="Vertical">
+                                <TextBlock FontFamily="Arial" FontSize="23" HorizontalAlignment="Center" Name="MaterText" Text=""></TextBlock>
+                                <TreeView FontFamily="Arial" FontSize="20"  BorderThickness="0" Name="MaterTV">
+                                    <TreeViewItem  Tag="1" Header="Биография писателя">
+                                    </TreeViewItem>
+                                    <TreeViewItem Tag="2" Header="Писательская работа">
+                                    </TreeViewItem>
+                                    <TreeViewItem Tag="3" Header="Выпущенные книги">
+                                        <StackPanel Name="yndyrgen_nomnary" Visibility="Collapsed">
+                                            <Label HorizontalAlignment="Center" FontSize="16" FontWeight="Bold">Добавление новой книги</Label>
+                                            <Grid Name="Books"  >
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Label Grid.Column="0" Grid.Row="0">Введите название книги</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="0" Name="Book_Name" Margin="2 2" VerticalContentAlignment="Center"  Width="250"></TextBox>
+
+                                                <Label  Grid.Column="0" Grid.Row="1">Введите жанр книги</Label>
+                                                <TextBox  Grid.Column="1" Grid.Row="1" Name="Book_Janr" Margin="2 2" VerticalContentAlignment="Center" Width="250"></TextBox>
+
+                                                <Label Grid.Column="0" Grid.Row="2">Введите год выпуска</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="2" Name="Book_Year" Margin="2 2" VerticalContentAlignment="Center" Width="250"></TextBox>
+
+                                                <Label Grid.Column="0" Grid.Row="3">Введите типографию</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="3" Name="Book_Tipogr" Margin="2 2" VerticalContentAlignment="Center" Width="250"></TextBox>
+
+                                                <Label Grid.Column="0" Grid.Row="4" >Введите кол-во страниц</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="4" Name="Book_Pages" Margin="2 2" VerticalContentAlignment="Center" Width="250"></TextBox>
+                                            </Grid>
+                                            <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+                                                <Button Click="Button_Click_3" Width="100" Height="30"  Content="Добавить">
+                                                </Button>
+                                            </StackPanel>
                                         </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                            <Label>Введите жанр книги</Label>
-                                            <TextBox Name="Book_Janr" Margin="27 0 0 0" Width="250"></TextBox>
+                                    </TreeViewItem>
+                                    <TreeViewItem Tag="4" Header="Работы о писателе">
+                                        <StackPanel Name="chog_dug_azhyld" Visibility="Collapsed">
+                                            <Label HorizontalAlignment="Center" FontSize="16" FontWeight="Bold">Добавление работы о писателе</Label>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Label Grid.Column="0" Grid.Row="0">Введите название работы о писателе</Label>
+                                                <TextBox  Grid.Column="1" Grid.Row="0"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Chog_Dug_Name" ></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="1">Введите ФИО писателя</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="1"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Chog_Dug_Autor"></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="2">Введите источник писателя</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="2"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Chog_Dug_Istochnik"></TextBox>
+                                                <Label  Grid.Column="0" Grid.Row="3">Введите год работы</Label>
+                                                <TextBox Name="Chog_Dug_Year" Grid.Column="1" Grid.Row="3"  Margin="2 2" VerticalContentAlignment="Center" Width="250"></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="4">Введите день работы</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="4"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Chog_Dug_Day" ></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="5">Введите номер выпуска</Label>
+                                                <TextBox  Grid.Column="1" Grid.Row="5"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Chog_Dug_Number"></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="6">Введите номер страницы в источнике</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="6"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Chog_Dug_Pages"></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="7">На каком языке журнал:</Label>
+                                                <StackPanel Grid.Column="1" Grid.Row="7">
+                                                    <RadioButton Content="Русский" IsChecked="True" x:Name="Chog_Dug_Language1">
+                                                    </RadioButton>
+                                                    <RadioButton Content="Тувинский" x:Name="Chog_Dug_Language2">
+                                                    </RadioButton>
+                                                </StackPanel>
+                                            </Grid>
+                                            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                                <Button Click="Button_Click_5" Width="100" Height="30" Content="Добавить">
+                                                </Button>
+                                            </StackPanel>
                                         </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                            <Label>Введите год выпуска</Label>
-                                            <TextBox Name="Book_Year" Margin="24 0 0 0" Width="250"></TextBox>
+                                    </TreeViewItem>
+                                    <TreeViewItem Tag="5" Header="Переводы произведений">
+                                        <StackPanel Name="Ochulgalary" Visibility="Collapsed" >
+                                            <Label HorizontalAlignment="Center" FontSize="16" FontWeight="Bold">Добавление перевода</Label>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Label Grid.Column="0" Grid.Row="0">Введите навзвание произведения</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="0"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Ochulgalary_Name"></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="1">Введите жанр произведения</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="1"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Ochulgalary_Janr"></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="2">Перевод</Label>
+                                                <StackPanel  Grid.Column="1" Grid.Row="2">
+                                                    <RadioButton  Content="С тувинского" IsChecked="True" x:Name="Ochulgalary_Language">
+                                                    </RadioButton>
+                                                    <RadioButton Content="На тувинский">
+                                                    </RadioButton>
+                                                </StackPanel>
+                                                <Label Grid.Column="0" Grid.Row="3">Введите фио автора произведения</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="3"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Ochulgalary_Autor" ></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="4">Кто перевёл</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="4"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Ochulgalary_Translator"></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="5">Введите фио редактора</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="5"  Margin="2 2" VerticalContentAlignment="Center" Width="250"  Name="Ochulgalary_Redaktor"></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="6">Введите название типографии</Label>
+                                                <TextBox Grid.Column="1" Grid.Row="6"  Margin="2 2" VerticalContentAlignment="Center" Width="250"  Name="Ochulgalary_Tipograph"></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="7">Выберите дату</Label>
+                                                <DatePicker  Grid.Column="1" Grid.Row="7" SelectedDate="01.01.2000" Name="Ochulgalary_Date"  Width="250"></DatePicker>
+                                                <Label Grid.Column="0" Grid.Row="8">Введите номер выпуска</Label>
+                                                <TextBox  Grid.Column="1" Grid.Row="8"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Ochulgalary_Number"></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="9">Введите кол-во страниц</Label>
+                                                <TextBox  Grid.Column="1" Grid.Row="9"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Ochulgalary_Pages"></TextBox>
+                                            </Grid>
+                                            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                                <Button Click="Button_Click_6" Width="100" Height="30" Content="Добавить">
+                                                </Button>
+                                            </StackPanel>
                                         </StackPanel>
-                                        <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                            <Label>Введите типографию</Label>
-                                            <TextBox Name="Book_Tipogr" Margin="22 0 0 0" Width="250"></TextBox>
+                                    </TreeViewItem>
+                                    <TreeViewItem Tag="7" Header="Стихотворения ставшие песнями">
+                                        <StackPanel Name="yry_apargan" Visibility="Collapsed">
+                                            <Label HorizontalAlignment="Center" FontSize="16" FontWeight="Bold">Добавление стихотворения</Label>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                    <RowDefinition></RowDefinition>
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                    <ColumnDefinition></ColumnDefinition>
+                                                </Grid.ColumnDefinitions>
+                                                <Label Grid.Column="0" Grid.Row="0">Введите навзвание произведения</Label>
+                                                <TextBox  Grid.Column="1" Grid.Row="0"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Songs_Name" ></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="1">Введите автора музыки</Label>
+                                                <TextBox  Grid.Column="1" Grid.Row="1"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Songs_Music" ></TextBox>
+                                                <Label Grid.Column="0" Grid.Row="2">Введите год выпуска</Label>
+                                                <TextBox  Grid.Column="1" Grid.Row="2"  Margin="2 2" VerticalContentAlignment="Center" Width="250" Name="Songs_Year"></TextBox>
+                                            </Grid>
+                                            <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
+                                                <Button Click="Button_Click_7" Width="100" Height="30" Content="Добавить">
+                                                </Button>
+                                            </StackPanel>
                                         </StackPanel>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите кол-во страниц</Label>
-                                        <TextBox Name="Book_Pages" Margin="5 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Button Click="Button_Click_3" Width="100" Height="20" Margin="100 0 0 0" Content="Добавить">
-                                        </Button>
-                                    </StackPanel>
-                                </StackPanel>
-                            </TreeViewItem>
-                            <TreeViewItem Tag="4" Header="Работы о писателе">
-                                <StackPanel Name="chog_dug_azhyld" Visibility="Collapsed">
-                                    <Label HorizontalAlignment="Center" FontSize="16" FontWeight="Bold">Добавление работы о писателе</Label>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label>Введите название работы о писателе</Label>
-                                        <TextBox Name="Chog_Dug_Name" Margin="5 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите ФИО писателя</Label>
-                                        <TextBox Name="Chog_Dug_Autor" Margin="83 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите источник писателя</Label>
-                                        <TextBox Name="Chog_Dug_Istochnik" Margin="59 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите год работы</Label>
-                                        <TextBox Name="Chog_Dug_Year" Margin="100 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите день работы</Label>
-                                        <TextBox Name="Chog_Dug_Day" Margin="93 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите номер выпуска</Label>
-                                        <TextBox Name="Chog_Dug_Number" Margin="77 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите номер страницы в источнике</Label>
-                                        <TextBox Name="Chog_Dug_Pages" Margin="0 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>На каком языке журнал:</Label>
-                                        <StackPanel Margin="73 0 0 0">
-                                            <RadioButton Content="Русский" IsChecked="True" x:Name="Chog_Dug_Language1">
-                                                </RadioButton>
-                                            <RadioButton Content="Тувинский" x:Name="Chog_Dug_Language2">
-                                                </RadioButton>
-                                        </StackPanel>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Button Click="Button_Click_5" Width="100" Height="20" Margin="100 0 0 0" Content="Добавить">
-                                        </Button>
-                                    </StackPanel>
-                                </StackPanel>
-                            </TreeViewItem>
-                            <TreeViewItem Tag="5" Header="Переводы произведений">
-                                <StackPanel Name="Ochulgalary" Visibility="Collapsed">
-                                    <Label HorizontalAlignment="Center" FontSize="16" FontWeight="Bold">Добавление перевода</Label>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label>Введите навзвание произведения</Label>
-                                        <TextBox Name="Ochulgalary_Name" Margin="10 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите жанр произведения</Label>
-                                        <TextBox Name="Ochulgalary_Janr" Margin="38 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
-                                        <Label>Перевод</Label>
-                                        <StackPanel Margin="150 0 0 0">
-                                            <RadioButton Checked="Ochulgalary_Language_Checked" Content="С тувинского" IsChecked="False" x:Name="Ochulgalary_Language">
-                                            </RadioButton>
-                                            <RadioButton Checked="RadioButton_Checked" Content="На тувинский">
-                                            </RadioButton>
-                                        </StackPanel>
-                                    </StackPanel>
-                                    <StackPanel Visibility="Collapsed" Name="OCh_avtor" Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите фио автора произведения</Label>
-                                        <TextBox Name="Ochulgalary_Autor" Margin="4 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Кто перевёл</Label>
-                                        <TextBox Name="Ochulgalary_Translator" Margin="129 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите фио редактора</Label>
-                                        <TextBox Name="Ochulgalary_Redaktor" Margin="67 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите название типографии</Label>
-                                        <TextBox Name="Ochulgalary_Tipograph" Margin="29 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Выберите дату </Label>
-                                        <DatePicker Name="Ochulgalary_Date" Margin="116 0 0 0" Width="250"></DatePicker>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите номер выпуска</Label>
-                                        <TextBox Name="Ochulgalary_Number" Margin="65 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите кол-во страниц</Label>
-                                        <TextBox Name="Ochulgalary_Pages" Margin="64 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Button Click="Button_Click_6" Width="100" Height="20" Margin="100 0 0 0" Content="Добавить">
-                                        </Button>
-                                    </StackPanel>
-                                </StackPanel>
-                            </TreeViewItem>
-                            <TreeViewItem Tag="7" Header="Стихотворения ставшие песнями">
-                                <StackPanel Name="yry_apargan" Visibility="Collapsed">
-                                    <Label HorizontalAlignment="Center" FontSize="16" FontWeight="Bold">Добавление стихотворения</Label>
-                                    <StackPanel Orientation="Horizontal">
-                                        <Label>Введите навзвание произведения</Label>
-                                        <TextBox Name="Songs_Name" Margin="10 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите автора музыки</Label>
-                                        <TextBox Name="Songs_Music" Margin="68 0 0 0" Width="250"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Label>Введите год выпуска</Label>
-                                        <TextBox Margin="83 0 0 0" Width="250"  Name="Songs_Year"></TextBox>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Margin="0 5 0 0">
-                                        <Button Click="Button_Click_7" Width="100" Height="20" Margin="100 0 0 0" Content="Добавить">
-                                        </Button>
-                                    </StackPanel>
-                                </StackPanel>
-                            </TreeViewItem>
-                        </TreeView>
+                                    </TreeViewItem>
+                                </TreeView>
+                            </StackPanel>
+                            <StackPanel Name="Web_Tree" Orientation="Vertical">
+                                <TextBlock TextWrapping="Wrap" Name="spisok_v_db" Visibility="Collapsed" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold">Список существующих в базе данных (Цветные - есть в базе)</TextBlock>
+                                <WebBrowser Visibility="Collapsed" Height="auto" x:Name="webbrowser" Width="600"/>
+                                <TreeView BorderThickness="0" Visibility="Collapsed" Height="auto" x:Name="TV" MaxWidth="600" MinWidth="300">
+                                    <TreeView.Resources>
+                                        <Style TargetType="{x:Type TreeViewItem}">
+                                            <Setter Property="HeaderTemplate">
+                                                <Setter.Value>
+                                                    <DataTemplate>
+                                                        <TextBlock MaxWidth="600" MinWidth="300"
+                                                TextWrapping="Wrap"
+                                                Text="{Binding}" />
+                                                    </DataTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </TreeView.Resources>
+                                </TreeView>
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
-                    <StackPanel Name="Web_Tree" Orientation="Vertical">
-                        <Label Name="spisok_v_db" Visibility="Collapsed" HorizontalAlignment="Center" FontSize="16" FontWeight="Bold">Список существующих в базе данных</Label>
-                        <WebBrowser Visibility="Collapsed" Height="auto" x:Name="webbrowser" MaxWidth="2000" MinWidth="600"/>
-                        <TreeView BorderThickness="0" Visibility="Collapsed" Height="auto" x:Name="TV" MaxWidth="2000" MinWidth="600"/>
-                    </StackPanel>
-                </StackPanel>
-             </StackPanel>
+                </Border>
+            </StackPanel>
             <StackPanel Name="deleteWR" Orientation="Vertical" Visibility="Collapsed">
-                <Label Name="Menu_Header" HorizontalAlignment="Center" FontSize="18">Удаление писателя</Label>
+                <Label Name="Menu_Header" HorizontalAlignment="Center" FontSize="27">Удаление писателя</Label>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Label FontSize="15">Введите фамилию писателя для поиска</Label>
-                    <TextBox Name="deleteWR_textbox" FontSize="15" Width="150"/>
-                    <Button Margin="5 0 0 0" Content="Найти" Width="70" FontSize="15"></Button>
+                    <Grid Grid.Row="2">
+                        <TextBlock FontFamily="Arial" Margin="9,30" FontSize="18" Text="Введите фамилию автора" Foreground="LightGray" >
+                            <TextBlock.Visibility>
+                                <MultiBinding Converter="{StaticResource Helper}">
+                                    <Binding ElementName="txtLastName" Path="Text.IsEmpty" />
+                                    <Binding ElementName="txtLastName" Path="IsFocused" />
+                                </MultiBinding>
+                            </TextBlock.Visibility>
+                        </TextBlock>
+                        <TextBox Margin="5,23" VerticalContentAlignment="Center" TextAlignment="Justify" Template="{StaticResource TextBoxBaseControlTemplate}"  FontSize="23" FontFamily="Arial" Name="txtLastName" Background="Transparent" Width="740" Height="40"  PreviewKeyUp="txtLastName_PreviewKeyUp"  />
+                    </Grid>
                 </StackPanel>
                 <Grid ShowGridLines="False" Name="Delete_grid" MinWidth="600" MaxWidth="700">
                     <Grid.ColumnDefinitions>
@@ -348,6 +454,23 @@
                         <ColumnDefinition Width="0.25*"></ColumnDefinition>
                     </Grid.ColumnDefinitions>
                 </Grid>
+            </StackPanel>
+            <StackPanel x:Name="PassChangePanel" Margin="20 20 0 0" Visibility="Collapsed">
+                <TextBlock Margin="0 10 0 0" FontFamily="Arial" FontSize="27" Text="Смена пароля" HorizontalAlignment="Center"/>
+                <Border Margin="0 20 0 0" Width="470" Height="350" BorderBrush="#FF0096D3" BorderThickness="1" CornerRadius="10">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"  Orientation="Vertical">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock Text="Логин" FontFamily="Arial" FontSize="20"/>
+                            <TextBox Margin="0,0" VerticalContentAlignment="Center" TextAlignment="Justify" Template="{StaticResource TextBoxBaseControlTemplate}"  FontSize="23" FontFamily="Arial" Name="NewLogin" Background="Transparent" Width="360" Height="40"/>
+                            <TextBlock Margin="0 10 0 0" Text="Пароль" FontFamily="Arial" FontSize="20"/>
+                            <PasswordBox Template="{StaticResource passwordbox}"  Margin="0,5" VerticalContentAlignment="Center" FontSize="23" FontFamily="Arial" Name="NewPassword" Background="Transparent" Width="360" Height="40"/>
+
+                        </StackPanel>
+                        <Border Margin="0 30 0 0" PreviewMouseUp="Border_PreviewMouseUp" MouseEnter="but_MouseEnter" MouseLeave="but_MouseLeave" Width="300" Height="60" CornerRadius="5" Background="#FF0096D3" BorderBrush="Black" BorderThickness="3">
+                            <TextBlock Foreground="White" TextWrapping="Wrap" FontFamily="Arial" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Сменить логин и пароль"/>
+                        </Border>
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

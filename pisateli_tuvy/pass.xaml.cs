@@ -5,7 +5,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.IO;
 using Microsoft.Win32;
-
+using System.Security.Cryptography;
+using System.Text;
 
 namespace pisateli_tuvy
 {
@@ -28,6 +29,7 @@ namespace pisateli_tuvy
         ////////УДАЛЕНИЕ ДОБАВЛЕНИЕ ИЗМЕНЕНИЕ МАТЕРИАЛА В БД
         Button nazad = new Button();
         Button btn = new Button();
+        static string deleteme = "";
         public void Delete_File(string Table,string Pole,int id,string Folder, int add)
         {
             try
@@ -96,7 +98,7 @@ namespace pisateli_tuvy
                 {
                     TV.Visibility = Visibility.Collapsed;
                     webbrowser.Visibility = Visibility.Visible;
-                    string deleteme = folder_path + Folder + "\\" + knigapath;
+                    string deleteme1 = folder_path + Folder + "\\" + knigapath;
                     con.OpenPdf(folder_path + Folder + "\\" + knigapath, webbrowser);
                     nazad.Content = "Назад к списку";
                     Web_Tree.Children.Add(nazad);
@@ -105,11 +107,13 @@ namespace pisateli_tuvy
                     nazad.Height = 20;
                     nazad.Click += (q,j) =>
                     {
+
                         TV.Visibility = Visibility.Visible;
                         webbrowser.Visibility = Visibility.Collapsed;
                         Web_Tree.Children.Remove(btn);
                         Web_Tree.Children.Remove(nazad);
                         ChangeBtn = false;
+                        if(File.Exists(deleteme)) File.Delete(deleteme);
                     };
                     btn.Content = "Загрузить другой файл";
                     Web_Tree.Children.Add(btn);
@@ -146,8 +150,9 @@ namespace pisateli_tuvy
                                         File.Copy(s, folder_path + Folder + "\\" + p + ".pdf");
                                         con.ExecuteNonQuery("update " + Table + " set " + Pole + "_text = '" + p + ".pdf' where " + Pole + "_id = " + id);
                                         webbrowser.Navigate(folder_path + Folder + "\\" + p + ".pdf");
+                                        deleteme = deleteme1;
                                         MessageBox.Show("Изменено.");
-                                        File.Delete(deleteme);
+                                        
                                     }
                                 }
                                 break;
@@ -185,8 +190,11 @@ namespace pisateli_tuvy
                 int l = 0;
                 foreach (TreeViewItem tvitem in TV.Items)
                 {
+                    tvitem.FontFamily = new FontFamily("Arial");
+                    tvitem.FontSize = 16;
                     if (kniga_text[l] != "") tvitem.Foreground = Brushes.Brown;
                     else tvitem.Foreground = Brushes.Black;
+                    
                     tvitem.Header = (l + 1) + ". " + kniga_name[l] + ". " + kniga_name[l] + " " + kniga_janr[l] + " .- " + kniga_tipograph[l] + ", " + kniga_date[l];
                     tvitem.Tag = kniga_id[l];
                     l++;
@@ -239,6 +247,8 @@ namespace pisateli_tuvy
                 for (int i = 0; i < count; i++)
                 {
                     TreeViewItem tvitem = new TreeViewItem();
+                    tvitem.FontFamily = new FontFamily("Arial");
+                    tvitem.FontSize = 16;
                     tvitem.Header = (i + 1) + ". " + autor[i] + ". " + title[i] + "// " + istochnik[i] + ". - " + year[i] + ".";
                     TV.Items.Add(tvitem);
                     if (kniga_text[i] != "") tvitem.Foreground = Brushes.Brown;
@@ -292,6 +302,8 @@ namespace pisateli_tuvy
                 for (int i = 0; i < count; i++)
                 {
                     TreeViewItem TVitem = new TreeViewItem();
+                    TVitem.FontFamily = new FontFamily("Arial");
+                    TVitem.FontSize = 16;
                     TVitem.Header = (i + 1) + ". " + yry_title[i] + "-" + yry_music[i];
                     TV.Items.Add(TVitem);
                     if (kniga_text[i] != "") TVitem.Foreground = Brushes.Brown;
@@ -348,6 +360,8 @@ namespace pisateli_tuvy
                 for (int i = 0; i < count; i++)
                 {
                     TreeViewItem TVitem = new TreeViewItem();
+                    TVitem.FontFamily = new FontFamily("Arial");
+                    TVitem.FontSize = 16;
                     if (Rus[i].Trim() == "tyv") Rus[i] = "На тувинский";
                     else Rus[i] = "С тувинского";
                     TVitem.Header = (i + 1) + ". " + autor[i] + " " + title[i] + ":/ " + perevodchik[i] + " - " + tipograph[i] + ", " + year[i] + ", " + Rus[i];
@@ -658,15 +672,28 @@ namespace pisateli_tuvy
 
         private void ok_Click(object sender, RoutedEventArgs e)
         {
-            string passwrd = "1234";
-            string log = "admin";
-            if (login.Text == log && password.Password == passwrd)
+            try
             {
-                this.WindowState = WindowState.Maximized;
-                Password.Visibility = Visibility.Collapsed;
-                admin();
+                string passwrd = con.Reader("select password from Password where id = 1");
+                string log = con.Reader("select login from Password where id = 1");
+                string _hash = "";
+                using (MD5 md5Hash = MD5.Create())
+                {
+                    _hash = Code(md5Hash, password.Password.Trim());
+                }
+                if (login.Text == log && _hash == passwrd)
+                {
+                    this.WindowState = WindowState.Maximized;
+                    Password.Visibility = Visibility.Collapsed;
+                    admin();
+                }
+                else MessageBox.Show("Неверный пароль или логин!");
             }
-            else MessageBox.Show("Неверный пароль или логин!");
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
+            
         }
         public void admin()
         {
@@ -689,7 +716,7 @@ namespace pisateli_tuvy
             try
             {
                 if(File.Exists(path+ "\\all\\img\\default.png"))
-                    add_img_pis.Source = con.GetImage("\\all\\img\\default.png");
+                    add_img_pis.ImageSource = con.GetImage("\\all\\img\\default.png");
               
 
             }
@@ -710,20 +737,28 @@ namespace pisateli_tuvy
             Menu_Admin = 2;
             deleteWR.Visibility = Visibility.Visible;
             Menu_Header.Content = "Редактирование писателя";
-            search();
+            txtLastName.Text = "";
+            search("");
            
         }
-        public void search()
+        private void txtLastName_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            string surname = txtLastName.Text.Trim();
+            search(surname);
+        }
+        public void search(string fam)
         {
             try
             {
-                int count = con.ExecuteScalar("select count (*) from chogaalchy");
-                string[] all_id = con.Reader_Array("select chog_id from chogaalchy order by chog_fam", count);
-                string[] all_img = con.Reader_Array("select chog_photo from chogaalchy order by chog_fam", count);
-                string[] all_fam = con.Reader_Array("select chog_fam from chogaalchy order by chog_fam", count);
-                string[] all_imya = con.Reader_Array("select chog_imya from chogaalchy order by chog_fam", count);
-                string[] all_otch = con.Reader_Array("select chog_otch from chogaalchy order by chog_fam", count);
-                string[] all_folder = con.Reader_Array("select folder from chogaalchy order by chog_fam", count);
+                Delete_grid.Children.Clear();
+                fam = txtLastName.Text.Trim();
+                int count = con.ExecuteScalar("select count (*) from chogaalchy where chog_fam like '" + fam + "%'");
+                string[] all_id = con.Reader_Array("select chog_id from chogaalchy where chog_fam like '" + fam + "%' order by chog_fam", count);
+                string[] all_img = con.Reader_Array("select chog_photo from chogaalchy where chog_fam like '" + fam + "%' order by chog_fam" , count);
+                string[] all_fam = con.Reader_Array("select chog_fam from chogaalchy where chog_fam like '" + fam + "%' order by chog_fam", count);
+                string[] all_imya = con.Reader_Array("select chog_imya from chogaalchy  where chog_fam like '" + fam + "%' order by chog_fam", count);
+                string[] all_otch = con.Reader_Array("select chog_otch from chogaalchy  where chog_fam like '" + fam + "%' order by chog_fam", count);
+                string[] all_folder = con.Reader_Array("select folder from chogaalchy  where chog_fam like '" + fam + "%' order by chog_fam", count);
                 for (int i = 0; i < count; ++i)
                 {
                     Delete_grid.RowDefinitions.Add(new RowDefinition());
@@ -812,8 +847,8 @@ namespace pisateli_tuvy
             Back.Visibility = Visibility.Visible;
             deleteWR.Visibility = Visibility.Visible;
             adminPanel.Visibility = Visibility.Collapsed;
-            Delete_grid.Children.Clear();
-            search();
+            txtLastName.Text = "";
+            search("");
         }
          public void FolderDelete(string DelPath)
         {
@@ -966,6 +1001,10 @@ namespace pisateli_tuvy
         //////Добавление материала
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            bord = dobav_mater;
+            dobav_mater.Background = new SolidColorBrush(Color.FromRgb(0, 96, 135));
+            udal_mater.Background = new SolidColorBrush(Color.FromRgb(0, 150, 211));
+            spisok_v_db.Visibility = Visibility.Collapsed;
             Del_Add = 1;
             MaterText.Text = "Добавление материала";
             DeleteMater.Visibility = Visibility.Visible;
@@ -978,6 +1017,10 @@ namespace pisateli_tuvy
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
+            bord = udal_mater;
+            udal_mater.Background = new SolidColorBrush(Color.FromRgb(0, 96, 135));
+            dobav_mater.Background = new SolidColorBrush(Color.FromRgb(0, 150, 211));
+            spisok_v_db.Visibility = Visibility.Collapsed;
             Del_Add = 2;
             MaterText.Text = "Удаление материала";
             DeleteMater.Visibility = Visibility.Visible;
@@ -1015,36 +1058,46 @@ namespace pisateli_tuvy
                                                                                          /////////ДОБАВЛЕНИЕ КНИГИ DONE
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
-            string Name = Book_Name.Text.Trim();
-            string Janr = Book_Janr.Text.Trim();
-            string Year = Book_Year.Text.Trim();
-            string Tipograph = Book_Tipogr.Text.Trim();
-            string Pages = Book_Pages.Text.Trim();
-            int k = 0;
-            string _Input = "";
-            string _Output = "";
-            string _FileName = "";
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = @"C:\";
-            ofd.Filter = "Pdf Files|*.pdf";
-            if (ofd.ShowDialog() == true)
+            try
             {
-                _Input = ofd.FileName;
-                _FileName = perevod(ofd.SafeFileName);
-                _Output = folder_path + "nomnary\\" + _FileName;
+                string Name = Book_Name.Text.Trim();
+                string Janr = Book_Janr.Text.Trim();
+                string Year = Book_Year.Text.Trim();
+                string Tipograph = Book_Tipogr.Text.Trim();
+                string Pages = Book_Pages.Text.Trim();
+                if (Name != "" && Janr != "" && Year != "" && Tipograph != "" && Pages != "")
+                {
+                    int k = 0;
+                    string _Input = "";
+                    string _Output = "";
+                    string _FileName = "";
+                    OpenFileDialog ofd = new OpenFileDialog();
+                    ofd.InitialDirectory = @"C:\";
+                    ofd.Filter = "Pdf Files|*.pdf";
+                    if (ofd.ShowDialog() == true)
+                    {
+                        _Input = ofd.FileName;
+                        _FileName = perevod(ofd.SafeFileName);
+                        _Output = folder_path + "nomnary\\" + _FileName;
+                    }
+                    if (k == 0)
+                    {
+                        con.ExecuteNonQuery("insert into nomnary (nomnary_title,nomnary_zhanr,nomnary_god,nomnary_tipograph,nomnary_stranisy,nomnary_text,nomnary_uid,nomnary_pozisiya) values ('" + Name + "','" + Janr + "'," + Year + ",'" + Tipograph + "'," + Pages + ",'" + _FileName + "'," + uid + ",0)");
+                        k = 1;
+                    }
+                    if (k == 1)
+                    {
+                        File.Copy(_Input, _Output);
+                    }
+                    TV.Items.Clear();
+                    Vypush_knigi();
+                }
+                else MessageBox.Show("Пожалуйста, заполните все поля");
             }
-            if (k == 0)
+            catch (Exception ex)
             {
-                con.ExecuteNonQuery("insert into nomnary (nomnary_title,nomnary_zhanr,nomnary_god,nomnary_tipograph,nomnary_stranisy,nomnary_text,nomnary_uid,nomnary_pozisiya) values ('" + Name + "','" + Janr + "'," + Year + ",'" + Tipograph + "'," + Pages + ",'" + _FileName + "'," + uid + ",0)");
-                k = 1;
+                MessageBox.Show(ex+"");
             }
-            if (k==1)
-            {
-                File.Copy(_Input, _Output);
-            }
-            TV.Items.Clear();
-            Vypush_knigi();
-
         }
                                                                                                     //////КНОПКА НАЗАД
         private void Button_Click_4(object sender, RoutedEventArgs e)
@@ -1060,6 +1113,7 @@ namespace pisateli_tuvy
                     case 3: { deleteWR.Visibility = Visibility.Collapsed;  } break;
                     case 4: { editWR.Visibility = Visibility.Collapsed;  } break;
                     case 5: { deleteWR.Visibility = Visibility.Collapsed; } break;
+                    case 6: { PassChangePanel.Visibility = Visibility.Collapsed; }break;
                 }
                 switch (_before)
                 {
@@ -1081,187 +1135,225 @@ namespace pisateli_tuvy
                 }
             }
         }
-                                                                                    /////////ДОБАВЛЕНИЕ РАБОТЫ О ПИСАТАЛЕ DONE
+        /////////ДОБАВЛЕНИЕ РАБОТЫ О ПИСАТАЛЕ DONE
         private void Button_Click_5(object sender, RoutedEventArgs e)
         {
-           
-            string Title = Chog_Dug_Name.Text.Trim();
-            string Autor = Chog_Dug_Autor.Text.Trim();
-            string Magazine = Chog_Dug_Istochnik.Text.Trim();
-            string Year = Chog_Dug_Year.Text.Trim();
-            string Day = Chog_Dug_Day.Text.Trim();
-            string Number = Chog_Dug_Number.Text.Trim();
-            string Pages = Chog_Dug_Pages.Text.Trim();
-            string Language = "";
-            if (Chog_Dug_Language1.IsChecked == true) Language = "rus";
-            else Language = "tyv";
-
-            int k = 0;
-            string _Input = "";
-            string _Output = "";
-            string _FileName = "";
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = @"C:\";
-            ofd.Filter = "Pdf Files|*.pdf";
-            if (ofd.ShowDialog() == true)
-            {
-                _Input = ofd.FileName;
-                _FileName = perevod(ofd.SafeFileName);
-                _Output = folder_path + "chog_dug_azhyldary\\" + _FileName;
+            try
+            { 
+                string Title = Chog_Dug_Name.Text.Trim();
+                string Autor = Chog_Dug_Autor.Text.Trim();
+                string Magazine = Chog_Dug_Istochnik.Text.Trim();
+                string Year = Chog_Dug_Year.Text.Trim();
+                string Day = Chog_Dug_Day.Text.Trim();
+                string Number = Chog_Dug_Number.Text.Trim();
+                string Pages = Chog_Dug_Pages.Text.Trim();
+                string Language = "";
+                if (Chog_Dug_Language1.IsChecked == true) Language = "rus";
+                else Language = "tyv";
+                if (Title != "" && Autor != "" && Magazine != "" && Year != "" && Day != "" && Number != "" && Pages != "")
+                {
+                    int k = 0;
+                    string _Input = "";
+                    string _Output = "";
+                    string _FileName = "";
+                    OpenFileDialog ofd = new OpenFileDialog();
+                    ofd.InitialDirectory = @"C:\";
+                    ofd.Filter = "Pdf Files|*.pdf";
+                    if (ofd.ShowDialog() == true)
+                    {
+                        _Input = ofd.FileName;
+                        _FileName = perevod(ofd.SafeFileName);
+                        _Output = folder_path + "chog_dug_azhyldary\\" + _FileName;
+                    }
+                    if (k == 0)
+                    {
+                        con.ExecuteNonQuery("insert into chog_dug_azhyldar (chdugazh_title,chdugazh_avtor,chdugazh_text,chdugazh_istochnik,chdugazh_god,chdugazh_den,chdugazh_nomer,chdugazh_stranisy,chdugazh_log,chdugazh_uid) values ('" + Title + "','" + Autor + "','" + _FileName + "','" + Magazine + "'," + Year + ",'" + Day + "','№ " + Number + "','С. " + Pages + ".','" + Language + "'," + uid + ")");
+                        k = 1;
+                    }
+                    if (k == 1)
+                    {
+                        File.Copy(_Input, _Output);
+                    }
+                    raboty_o_pisatele();
+                }
+                else MessageBox.Show("Пожалуйста, заполните все поля");
             }
-            if (k == 0)
+            catch (Exception ex)
             {
-                con.ExecuteNonQuery("insert into chog_dug_azhyldar (chdugazh_title,chdugazh_avtor,chdugazh_text,chdugazh_istochnik,chdugazh_god,chdugazh_den,chdugazh_nomer,chdugazh_stranisy,chdugazh_log,chdugazh_uid) values ('" + Title + "','" + Autor + "','" + _FileName + "','" + Magazine + "'," + Year + ",'" + Day + "','№ " + Number+"','С. " + Pages + ".','" + Language + "'," +uid+ ")");
-                k = 1;
+                MessageBox.Show(ex+"");
             }
-            if (k == 1)
-            {
-                File.Copy(_Input, _Output);
-            }
-            raboty_o_pisatele();
-        }
+}
 
                                                                                                /////////ДОБАВЛЕНИЕ ПЕРЕВОДЫ DONE
         private void Button_Click_6(object sender, RoutedEventArgs e)
         {
 
-            string Title = Ochulgalary_Name.Text.Trim();
-            string Janr = Ochulgalary_Janr.Text.Trim();
-            string Autor = Ochulgalary_Autor.Text.Trim();
-            string Translator = Ochulgalary_Translator.Text.Trim();
-            string Redaktor = Ochulgalary_Redaktor.Text.Trim();
-            string Tipograph = Ochulgalary_Tipograph.Text.Trim();
-            ////DATE
-            DateTime SelectedDate = Ochulgalary_Date.SelectedDate.Value;
-            int Year = SelectedDate.Year;
-            string Day = SelectedDate.Day.ToString();
-            string Month = SelectedDate.ToString("MMMM");
-            string daymonth = Day + " " + Month;
-            ////
-            string Number = Ochulgalary_Number.Text.Trim();
-            string Pages = Ochulgalary_Pages.Text.Trim();
-
-            string papka = "";
-
-            string Language = "";
-            if (Ochulgalary_Language.IsChecked == true) { Language = "oth"; papka = "perevod_other\\"; }
-            else { Language = "tyv"; papka = "perevod_tuv\\"; }
-
-            int k = 0;
-            string _Input = "";
-            string _Output = "";
-            string _FileName = "";
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = @"C:\";
-            ofd.Filter = "Pdf Files|*.pdf";
-            if (ofd.ShowDialog() == true)
+            try
             {
-                _Input = ofd.FileName;
-                _FileName = perevod(ofd.SafeFileName);
-                _Output = folder_path + papka + _FileName;
+                string Title = Ochulgalary_Name.Text.Trim();
+                string Janr = Ochulgalary_Janr.Text.Trim();
+                string Autor = Ochulgalary_Autor.Text.Trim();
+                string Translator = Ochulgalary_Translator.Text.Trim();
+                string Redaktor = Ochulgalary_Redaktor.Text.Trim();
+                string Tipograph = Ochulgalary_Tipograph.Text.Trim();
+                ////DATE
+                DateTime SelectedDate = Ochulgalary_Date.SelectedDate.Value;
+                int Year = SelectedDate.Year;
+                string Day = SelectedDate.Day.ToString();
+                string Month = SelectedDate.ToString("MMMM");
+                string daymonth = Day + " " + Month;
+                ////
+                string Number = Ochulgalary_Number.Text.Trim();
+                string Pages = Ochulgalary_Pages.Text.Trim();
+
+                string papka = "";
+
+                string Language = "";
+                if (Ochulgalary_Language.IsChecked == true) { Language = "oth"; papka = "perevod_other\\"; }
+                else { Language = "tyv"; papka = "perevod_tuv\\"; }
+                if (Title != "" && Janr != "" && Translator != "" && Redaktor != "" && Tipograph != "" && Number != "" && Pages != "")
+                {
+                    int k = 0;
+                    string _Input = "";
+                    string _Output = "";
+                    string _FileName = "";
+                    OpenFileDialog ofd = new OpenFileDialog();
+                    ofd.InitialDirectory = @"C:\";
+                    ofd.Filter = "Pdf Files|*.pdf";
+                    if (ofd.ShowDialog() == true)
+                    {
+                        _Input = ofd.FileName;
+                        _FileName = perevod(ofd.SafeFileName);
+                        _Output = folder_path + papka + _FileName;
+                    }
+                    if (k == 0)
+                    {
+                        con.ExecuteNonQuery("insert into ochulgalary (ochulgalary_title,ochulgalary_zhanr,ochulgalary_autor,ochulgalary_perevodchik,ochulgalary_redaktor,ochulgalary_text,ochulgalary_tipograph,ochulgalary_god,ochulgalary_den,ochulgalary_nomer,ochulgalary_stranisy,ochulgalary_log,ochulgalary_uid) values ('" + Title + "','" + Janr + "','" + Autor + "','" + Translator + "','" + Redaktor + "','" + _FileName + "','" + Tipograph + "'," + Year + ",'" + daymonth + "'," + Number + "','" + Pages + " ар.','" + Language + "'," + uid + ")");
+                        k = 1;
+                    }
+                    if (k == 1)
+                    {
+                        if (File.Exists(_Output)) File.Delete(_Output);
+                        File.Copy(_Input, _Output);
+                    }
+                    Perevod_proizv();
+                }
             }
-            if (k == 0)
+            catch(Exception ex)
             {
-                con.ExecuteNonQuery("insert into ochulgalary (ochulgalary_title,ochulgalary_zhanr,ochulgalary_autor,ochulgalary_perevodchik,ochulgalary_redaktor,ochulgalary_text,ochulgalary_tipograph,ochulgalary_god,ochulgalary_den,ochulgalary_nomer,ochulgalary_stranisy,ochulgalary_log,ochulgalary_uid) values ('" + Title + "','" + Janr + "','" + Autor + "','" + Translator + "','" + Redaktor + "','" + _FileName + "','" + Tipograph + "'," + Year + ",'" + daymonth + "'," + Number + "','" +Pages  +" ар.','" +Language + "'," +uid+")");
-                k = 1;
+                MessageBox.Show(ex + "");
             }
-            if (k == 1)
-            {
-                if (File.Exists(_Output)) File.Delete(_Output);
-                File.Copy(_Input, _Output);
-            }
-            Perevod_proizv();
         }
 
-        private void RadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-           OCh_avtor.Visibility = Visibility.Visible;
-        }
-
-        private void Ochulgalary_Language_Checked(object sender, RoutedEventArgs e)
-        {
-            OCh_avtor.Visibility = Visibility.Collapsed;
-        }
                                                                                                          /////////ДОБАВЛЕНИЕ ПЕСНИ СТАВШИЕ СТИХАМИ DONE
         private void Button_Click_7(object sender, RoutedEventArgs e)
         {
-            string Title = Songs_Name.Text.Trim();
-            string Music = Songs_Music.Text.Trim();
-            string Year = Songs_Year.Text.Trim();
+            try
+            {
+                string Title = Songs_Name.Text.Trim();
+                string Music = Songs_Music.Text.Trim();
+                string Year = Songs_Year.Text.Trim();
 
+                if (Title != "" && Music != "" && Year != "")
+                {
 
-            int k = 0;
-            string _Input = "";
-            string _Output = "";
-            string _FileName = "";
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = @"C:\";
-            ofd.Filter = "Pdf Files|*.pdf";
-            if (ofd.ShowDialog() == true)
-            {
-                _Input = ofd.FileName;
-                _FileName = perevod(ofd.SafeFileName);
-                _Output = folder_path + "pesni\\" + _FileName;
+                    int k = 0;
+                    string _Input = "";
+                    string _Output = "";
+                    string _FileName = "";
+                    OpenFileDialog ofd = new OpenFileDialog();
+                    ofd.InitialDirectory = @"C:\";
+                    ofd.Filter = "Pdf Files|*.pdf";
+                    if (ofd.ShowDialog() == true)
+                    {
+                        _Input = ofd.FileName;
+                        _FileName = perevod(ofd.SafeFileName);
+                        _Output = folder_path + "pesni\\" + _FileName;
+                    }
+                    if (k == 0)
+                    {
+                        con.ExecuteNonQuery("insert into yry_apargan_shulukteri (yry_apsh_title,yry_apsh_muz,yry_apsh_text,yry_apsh_god,yry_apsh_uid) values ('" + Title + "','" + Music + "','" + _FileName + "'," + Year + "," + uid + ")");
+                        k = 1;
+                    }
+                    if (k == 1)
+                    {
+                        if (File.Exists(_Output)) File.Delete(_Output);
+                        File.Copy(_Input, _Output);
+                    }
+                    stih_pes();
+                }
             }
-            if (k == 0)
+            catch(Exception ex)
             {
-                con.ExecuteNonQuery("insert into yry_apargan_shulukteri (yry_apsh_title,yry_apsh_muz,yry_apsh_text,yry_apsh_god,yry_apsh_uid) values ('" + Title + "','" + Music + "','" + _FileName + "'," + Year + "," + uid + ")");
-                k = 1;
+                MessageBox.Show(ex + "");
             }
-            if (k == 1)
-            {
-                if (File.Exists(_Output)) File.Delete(_Output);
-                File.Copy(_Input, _Output);
-            }
-            stih_pes();
         }
                                                                                                                         ////////РЕДАКТИРОВАНИЕ ФОТО
         private void Button_Click_8(object sender, RoutedEventArgs e)
         {
-            string _Input = "";
-            string _Output = "";
-            string _FileName = "";
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.InitialDirectory = @"C:\";
-            ofd.Filter = "Image Files|*.png;*.jpg";
-            if (ofd.ShowDialog() == true)
+            try
             {
-                _Input = ofd.FileName;
-                _FileName = "photo" +Path.GetExtension(_Input);
-                _Output = folder_path + "\\" + _FileName;
-            }
-            int k = 0;
-            if (k == 0)
-            {
-                if (File.Exists(folder_path + "\\" + con.Reader("select chog_photo from chogaalchy where chog_id = " + uid)))
+                string _Input = "";
+                string _Output = "";
+                string _FileName = "";
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.InitialDirectory = @"C:\";
+                ofd.Filter = "Image Files|*.png;*.jpg";
+                if (ofd.ShowDialog() == true)
                 {
-                   
-                    File.Delete(folder_path + "\\" + con.Reader("select chog_photo from chogaalchy where chog_id = " + uid));
+                    _Input = ofd.FileName;
+                    _FileName = "photo" + Path.GetExtension(_Input);
+                    _Output = folder_path + "\\" + _FileName;
                 }
-                con.ExecuteNonQuery("update chogaalchy set chog_photo = '" + _FileName + "' where chog_id = " + uid);
-                k = 1;
+                int k = 0;
+                if (k == 0)
+                {
+                    if (File.Exists(folder_path + "\\" + con.Reader("select chog_photo from chogaalchy where chog_id = " + uid)))
+                    {
+
+                        File.Delete(folder_path + "\\" + con.Reader("select chog_photo from chogaalchy where chog_id = " + uid));
+                    }
+                    con.ExecuteNonQuery("update chogaalchy set chog_photo = '" + _FileName + "' where chog_id = " + uid);
+                    k = 1;
+                }
+                if (k == 1)
+                {
+                    File.Copy(_Input, _Output);
+                }
+                string image = con.Reader("select folder from chogaalchy where chog_id = " + uid) + "\\" + con.Reader("select chog_photo from chogaalchy where chog_id = " + uid);
+                if (File.Exists(folder_path + "\\" + con.Reader("select chog_photo from chogaalchy where chog_id = " + uid)))
+                    Wr_Image.ImageSource = con.GetImage2(folder_path + "\\" + con.Reader("select chog_photo from chogaalchy where chog_id = " + uid));
+                else Wr_Image.ImageSource = con.GetImage2(path + "\\all\\img\\default.png");
             }
-            if (k == 1)
+            catch(Exception ex)
             {
-                File.Copy(_Input, _Output);
+                MessageBox.Show(ex + "");
             }
-            string image = con.Reader("select folder from chogaalchy where chog_id = " + uid) + "\\" + con.Reader("select chog_photo from chogaalchy where chog_id = " + uid);
-            if (File.Exists(folder_path + "\\" + con.Reader("select chog_photo from chogaalchy where chog_id = " + uid)))
-                Wr_Image.ImageSource = con.GetImage2(folder_path + "\\" + con.Reader("select chog_photo from chogaalchy where chog_id = " + uid));
-            else Wr_Image.ImageSource = con.GetImage2(path + "\\all\\img\\default.png");
 
         }
                                                                                                                     ///////РЕДАКТИРОВАНИЕ ИНФОРМАЦИИ О ПИСАТАЛЕ
         private void Button_Click_9(object sender, RoutedEventArgs e)
         {
-            int kojuun_id = Kojuun.SelectedIndex+1;
-            string fam = FAM.Text.Trim();
-            string imya = Imya.Text.Trim();
-            string otch = Otch.Text.Trim();
-            string dataroj = Data_rojd.Text.Trim();
-            string datasmert = Data_Smerti.Text.Trim();
-            string query = "update chogaalchy set chog_fam='"+fam+"',chog_imya='"+imya+"',chog_otch='"+otch+"',chog_datarozh='"+dataroj+"',chog_datasmerti='"+datasmert+"',"+"chog_region_id = "+kojuun_id+" where chog_id = "+uid;
-            con.ExecuteNonQuery(query);
+            try
+            {
+                int kojuun_id = Kojuun.SelectedIndex + 1;
+                string fam = FAM.Text.Trim();
+                string imya = Imya.Text.Trim();
+                string otch = Otch.Text.Trim();
+                string dataroj = Data_rojd.Text.Trim();
+                string datasmert = Data_Smerti.Text.Trim();
+                string query = "update chogaalchy set chog_fam='" + fam + "',chog_imya='" + imya + "',chog_otch='" + otch + "',chog_datarozh='" + dataroj + "',chog_datasmerti='" + datasmert + "'," + "chog_region_id = " + kojuun_id + " where chog_id = " + uid;
+                con.ExecuteNonQuery(query);
+               
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
+            finally
+            {
+                MessageBox.Show("Данные писателя успешно изменены.");
+            }
         }
         
         private void Button_Click_10(object sender, RoutedEventArgs e)
@@ -1275,14 +1367,10 @@ namespace pisateli_tuvy
                 pis_image = ofd.FileName;
                 Writer_Photo = Path.GetExtension(ofd.FileName);
             }
-            if (File.Exists(pis_image)) add_img_pis.Source = con.GetImage2(pis_image);
-            else add_img_pis.Source = con.GetImage("\\all\\img\\default.png");
+            if (File.Exists(pis_image)) add_img_pis.ImageSource = con.GetImage2(pis_image);
+            else add_img_pis.ImageSource = con.GetImage("\\all\\img\\default.png");
         }
 
-        private void Button_Click_11(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private void Border_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -1299,6 +1387,89 @@ namespace pisateli_tuvy
             Border b = (Border)sender;
             b.Background = Brushes.White;
             Mouse.OverrideCursor = Cursors.Arrow;
+        }
+        private void Pass_ChangePreviewMouseUp(object sender, MouseEventArgs e)
+        {
+            adminPanel.Visibility = Visibility.Collapsed;
+            PAGES += "6";
+            Back.Visibility = Visibility.Visible;
+            PassChangePanel.Visibility = Visibility.Visible;
+            try
+            {
+                NewLogin.Text = con.Reader("select login from Password where id = 1");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex + "");
+            }
+          
+
+        }
+        private void but_MouseEnter(object sender, MouseEventArgs e)
+        {
+            Border b = (Border)sender;
+            b.Background = new SolidColorBrush(Color.FromRgb(39, 79, 145));
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+        private void but_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Border b = (Border)sender;
+            b.Background = new SolidColorBrush(Color.FromRgb(0, 150, 211));
+            Mouse.OverrideCursor = Cursors.Arrow;
+        }
+        private void but_MouseEnter1(object sender, MouseEventArgs e)
+        {
+            Border b = (Border)sender;
+            b.Background = new SolidColorBrush(Color.FromRgb(39, 79, 145));
+            Mouse.OverrideCursor = Cursors.Hand;
+        }
+        Border bord;
+
+        private void but_MouseLeave1(object sender, MouseEventArgs e)
+        {
+            Border b = (Border)sender;
+            if (bord == dobav_mater)
+            {
+                dobav_mater.Background = new SolidColorBrush(Color.FromRgb(0, 96, 135));
+                udal_mater.Background = new SolidColorBrush(Color.FromRgb(0, 150, 211));
+            }
+            else if (bord == udal_mater)
+            {
+                udal_mater.Background = new SolidColorBrush(Color.FromRgb(0, 96, 135));
+                dobav_mater.Background = new SolidColorBrush(Color.FromRgb(0, 150, 211));
+            }
+            Mouse.OverrideCursor = Cursors.Arrow;
+        }
+        private void Border_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            try
+            {
+                if (NewLogin.Text != "" || NewPassword.Password != "")
+                {
+                    string _hash = "";
+                    using (MD5 md5Hash = MD5.Create())
+                    {
+                        _hash = Code(md5Hash, NewPassword.Password.Trim());
+                    }
+                    con.ExecuteNonQuery("UPDATE Password SET password = '" + _hash + "' , login = '" + NewLogin.Text.Trim() + "' WHERE id = 1");
+                    MessageBox.Show("Логин и пароль успешно изменены");
+                }
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex+"");
+            }
+        }
+        private string Code(MD5 md5Hash, string input)
+        {
+
+            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+            StringBuilder sBuilder = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
         }
     }
 }
